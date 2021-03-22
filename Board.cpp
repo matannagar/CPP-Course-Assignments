@@ -14,129 +14,132 @@ using ariel::Direction;
 namespace ariel
 {
 
-  void extendRows(vector<vector<char>>& board, int rows){
-    int curr_rows = board.size()-1;
-    int curr_columns = board[0].size();
+  void extendRows(vector<vector<char>>& board,unsigned int rows){
+    board.size();
+    
+    // cout<<"extendRows!"<<endl;
+     int curr_rows = board.size();
+      
+    unsigned int curr_columns = board.at(0).size();
+     
 
     vector<char> temp(curr_columns,'_');
-    for(int i=curr_rows; i<rows-1;i++){
+    for(unsigned int i=(unsigned int)curr_rows; i<=rows;i++){
       board.emplace_back(temp);
     }
-    
+  //  cout<<"numbers of rows now are:" << board.size()<<endl;
   }
 
-  void extendColumns(vector<vector<char>>& board,int columns){
+  void extendColumns(vector<vector<char>>& board,unsigned int columns){
+    
+    unsigned int curr_rows = board.size()-1;
+    unsigned int curr_columns = board.at(0).size()-1;
 
-    int curr_rows = board.size()-1;
-    int curr_columns = board[0].size()-1;
-
-    for(int i=0; i<=curr_rows;i++){
-      for (int j=curr_columns; j<columns-1;j++){
-        board[i].push_back('_');
+    for(unsigned int i=0; i<=curr_rows;i++){
+      for (unsigned int j=curr_columns; j<=columns-1;j++){
+        board.at(i).push_back('_');
       }
     }
+    // cout<<"numbers of cols now are:" << board.at(0).size()<<endl;
   } 
-  void insertHorizontal(vector<vector<char>>& board,int row, int column,string message){
-        string str_obj(message);
-        char* char_arr;
-        char_arr = &str_obj[0];
+  void insertHorizontal(vector<vector<char>>& board,unsigned int row, unsigned int column,string message){
+        
+        unsigned int needed_cols= column+message.length(); // -1 because if i want col 5 its actually 4 
 
-        int needed_cols= column+message.length()-1; // -1 because if i want col 5 its actually 4 
-
-        if(column+message.length()>board[0].size()){
+        if(column+message.length()>=board.at(0).size()){
           extendColumns(board,needed_cols);
         }
 
-        if(row>board.size()){
+        if(row>=board.size()){
           extendRows(board,row);
         }
   
-        for(int i=0;i<message.length();i++){
-          board[row-1][column-1+i]=char_arr[i];
+        for(unsigned int i=0;i<message.length();i++){
+          board.at(row).at(column+i)=message.at(i);
         }
 
   }
   
-  void insertVertical(vector<vector<char>>& board,int row, int column,string message){
-        string str_obj(message);
-        char* char_arr;
-        char_arr = &str_obj[0];
+  void insertVertical(vector<vector<char>>& board,unsigned int row, unsigned int column,string message){
+        
+        unsigned int needed_rows= row+message.length();
+        // cout<<board.size()<<endl;
 
-        int needed_rows= row+message.length()-1;
-
-        if(row+message.length()>board.size()){
+        if(row+message.length()>=board.size()){
           extendRows(board,needed_rows);
         }
 
-          // -1 because if i want col 5 its actually 4 
-
-        if(column>board[0].size()){
+        if(column>=board.at(0).size()){
           extendColumns(board,column);
         }
 
-         for(int i=0;i<message.length();i++){
-          board[row-1+i][column-1]=char_arr[i];
+         for(unsigned int i=0;i<message.length();i++){
+         board.at(row+i).at(column)=message.at(i);
         }
   }
       
-      void Board::post(unsigned int row, unsigned int column,Direction d, string message){
-      if (message==""){
-            throw invalid_argument("Illegal Input!");
+      void Board::post(unsigned int row, unsigned int column,Direction d, const string &message){
+      if (message.empty()){
+            return;
             }
 
-        int vec_rows = board.size();
-        int vec_columns = board[0].size();
-
-       
+        
+        
 
         if (Direction::Horizontal==d){
           insertHorizontal(board,row,column,message);
         
         }else{
         insertVertical(board,row,column,message);
-         
+        
         }
-        cout<<"posted successfully!"<<endl;
+      
       }
       
 
-      std::string Board::read(unsigned int row, unsigned int column,Direction d, int message){
-        int vec_rows = board.size();
-        int vec_columns = board[0].size();
+      std::string Board::read(unsigned int row, unsigned int column,Direction d, unsigned int message){
+        unsigned int vec_rows = board.size();
+        unsigned int vec_columns = board.at(0).size();
         string read;
 
-        if (vec_rows < row+message){
+        if (vec_rows <= row+message){
+          
           extendRows(board,row+message);
         }
-        if (vec_columns < column+message){
-          cout<<"extending now..."<<endl;
+        if (vec_columns <= column+message){
+         
           extendColumns(board,column+message);
         }
-        cout<<"made it here!"<<endl;
         if (Direction::Horizontal==d){
-        for(int i=column;i<column+message;i++){
-          read+=board[row-1][i-1];
+        for(unsigned int i=column;i<column+message;i++){
+          read+=board.at(row).at(i);
         }
         
         }else{
-        for(int i=row;i<row+message;i++){
-          read+=board[i][column];
+        for(unsigned int i=row;i<row+message;i++){
+          read+=board.at(i).at(column);
         }
-        
         }
-
         return read;
       }
 
       void Board::show(){
-        int vec_rows = board.size();
-        int vec_columns = board[0].size();
-        for(int i=0;i<vec_rows;i++){
-          for(int j=0; j<vec_columns;j++){
-            cout<<board[i][j];
+        unsigned int vec_rows = board.size();
+        unsigned int vec_columns = board.at(0).size();
+        for(unsigned int i=0;i<vec_rows;i++){
+          for(unsigned int j=0; j<vec_columns;j++){
+            cout<<board.at(i).at(j);
           }
           cout<<endl;
         }
+      }
+
+      void Board::clear(){
+        board = {
+        {'_', '_', '_'},
+        {'_', '_', '_'},
+        {'_', '_', '_'}
+    };
       }
   
 }

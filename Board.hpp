@@ -19,20 +19,19 @@ namespace ariel{
     };;
       // std::array<std::array<string,rows>,columns> board;
 
-
       public:
-      
         Board(){
-          cout<<"i have been built"<<endl;
+          // cout<<"i have been built"<<endl;
           // vector<vector<char>> board={{'_','_','_'},
           //                               {'_','_','_'},
           //                               {'_','_','_'}};
         };
         
-        ~Board(){cout<<"Board destroyed"<<endl;}
-         void post(unsigned int a, unsigned int b,Direction d, string message);
-         std::string read(unsigned int a, unsigned int b,Direction d, int message);
+        // ~Board(){cout<<"Board destroyed"<<endl;}
+         void post(unsigned int a, unsigned int b,Direction d, const string &message);
+         std::string read(unsigned int a, unsigned int b,Direction d, unsigned int message);
          void show();
+         void clear();
   };
  
 }
