@@ -49,7 +49,7 @@ looping through the array it will create nodes
 add the units to the checklist array (to make sure there are no duplicates)
 store the nodes in a graph.
 */
-void divideToNodes(const string &list, graph &graph)
+void divideToNodes(const string &list, graph_node &graph)
 {
   vector<pair<string, int>> vect; //list of all available units, made to prevent duplicates
 
@@ -102,3 +102,20 @@ int main()
 
   return 0;
 }
+if (graph.matrix.at(line).at(i).first == unit_1 || graph.matrix.at(line).at(i).first == unit_1)
+    {
+      for (size_t j = i + 1; j < graph.matrix.at(line).size(); j++)
+      {
+        if (graph.matrix.at(line).at(j).first == unit_1 || graph.matrix.at(line).at(j).first == unit_1)
+        {
+          graph.matrix.at(line).at(i).second; // this is my conversion vector
+          graph.matrix.at(line).at(j).second; // this is the other conversion vector.
+          pair<string, double> conv;
+          bool flag = true;
+          while(flag){
+            
+          }
+        }
+      }
+    }
+  }
