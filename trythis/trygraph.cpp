@@ -148,70 +148,124 @@ void insert1unit(vector<string> &units, graph &graph, int &i, unordered_map<stri
   //if the right unit is missing:
   if (umap.count(units.at(i + 4)) == 0)
   {
-    pointer = umap.at(units.at(i + 1)); // at which line am I
+    pointer = umap.at(unit1); // at which line am I
 
     
     //tells us at what line we should add the new pair
     // create a new pair to add to vec
-    pair<string, double> curr_conversion(units.at(i + 1), conv2);
-    add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
+    // // ~~~ 1
+    // pair<string, double> curr_conversion(unit1, conv2);
+    // // ~~~ 2
+    // add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
 
-    //give the new vector a name
-    add_to_existing_vec.first = units.at(i + 4);
-    //this is the pair we'll push insde vec
-    add_to_existing_vec.second = add_to_pair;
+    // //give the new vector a name
+    // // ~~~ 3
+    // add_to_existing_vec.first = unit2;
+    // add_to_existing_vec.second = add_to_pair;
 
-    //push to the matrix the final vector
-    graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
+    // // ~~~ 4
+    // //push to the matrix the final vector
+    // graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
 
-    //create pair to add to the existing vector of the other unit
-    left_unit.first = units.at(i + 4);
-    left_unit.second = pointer;
+    // //create pair to add to the existing vector of the other unit
+    // // ~~~ 5
+    // left_unit.first = unit2;
+    // left_unit.second = pointer;
 
-    //find my index !!TERRIBLE
-    int ind;
-    for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
-    {
-      if (graph.matrix.at(pointer).at(i).first == units.at(i + 1))
-        ind = i;
-    }
+    // //find my index !!TERRIBLE
+    // // ~~~ 6
+    // int ind;
+    // for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
+    // {
+    //   if (graph.matrix.at(pointer).at(i).first == unit1)
+    //     ind = i;
+    // }
 
-    pair<string, double> left_conversion(units.at(i + 4), conv1); //(m,1000)
-    graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
+    // // ~~~ 7
+    // pair<string, double> left_conversion(unit2, conv1); //(m,1000)
+    // graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
   }
 
   //if the left unit is missing
   else
   {
+    unit1 = units.at(i + 4);
+    unit2 = units.at(i + 1);
     //find where at which line am i
-    pointer = umap.at(units.at(i + 4));
-    
+    pointer = umap.at(unit1);
+    //conversions
+    conv1 = stod(units.at(i + 3));
+    conv2 = 1 / stod(units.at(i + 3));
     //create the conversion pair
-    pair<string, double> curr_conversion(units.at(i + 4), conv1);
+    // // ~~~ 1
+    // pair<string, double> curr_conversion(unit2, conv1);
 
-    // create a new pair to add to vec
-    add_to_pair.push_back(curr_conversion);
-    // setting the new pair
-    add_to_existing_vec.first = units.at(i + 1);
+    // // create a new pair to add to vec
+    // // ~~~ 2
+    // add_to_pair.push_back(curr_conversion);
+    // // setting the new pair
+    // // ~~~ 3
+    // add_to_existing_vec.first = unit1;
+    // add_to_existing_vec.second = add_to_pair;
+
+    // // ~~~ 4
+    // //this is the pair we will push insde vec
+    // graph.matrix.at(pointer).push_back(add_to_existing_vec);
+
+    // // ~~~ 5
+    // // add pair to the existing vector
+    // left_unit.first = unit1;
+    // left_unit.second = pointer;
+
+    // //find my index !!TERRIBLE
+    // // ~~~ 6
+    // int ind;
+    // for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
+    // {
+    //   if (graph.matrix.at(pointer).at(i).first == unit2)
+    //     ind = i;
+    // }
+    // // ~~~ 7
+    // pair<string, double> left_conversion(unit1, conv2); //(m,1000)
+    // graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
+  }
+  
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+  // ~~~ 1
+    pair<string, double> curr_conversion(unit1, conv2);
+    // ~~~ 2
+    add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
+
+    //give the new vector a name
+    // ~~~ 3
+    add_to_existing_vec.first = unit2;
     add_to_existing_vec.second = add_to_pair;
-    //this is the pair we will push insde vec
-    graph.matrix.at(pointer).push_back(add_to_existing_vec);
 
-    // add pair to the existing vector
-    left_unit.first = units.at(i + 1);
+    // ~~~ 4
+    //push to the matrix the final vector
+    graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
+
+    //create pair to add to the existing vector of the other unit
+    // ~~~ 5
+    left_unit.first = unit2;
     left_unit.second = pointer;
 
     //find my index !!TERRIBLE
+    // ~~~ 6
     int ind;
     for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
     {
-      if (graph.matrix.at(pointer).at(i).first == units.at(i + 4))
+      if (graph.matrix.at(pointer).at(i).first == unit1)
         ind = i;
     }
 
-    pair<string, double> left_conversion(units.at(i + 1), conv2); //(m,1000)
+    // ~~~ 7
+    pair<string, double> left_conversion(unit2, conv1); //(m,1000)
     graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
-  }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
   umap.insert(left_unit);
   // update(graph, pointer, conv1, conv2, unit1, unit2);
 }
