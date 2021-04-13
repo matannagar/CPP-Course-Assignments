@@ -35,7 +35,7 @@ void print(const graph &graph)
 
   for (int i = 0; i < vec.size(); i++)
   {
-
+    s+="Line:"+to_string(i)+" ";
     for (int j = 0; j < vec.at(i).size(); j++)
     {
       s += "<" + vec.at(i).at(j).first + "::";
@@ -43,9 +43,16 @@ void print(const graph &graph)
       {
         s += "(" + vec.at(i).at(j).second.at(k).first + "," + to_string(vec.at(i).at(j).second.at(k).second) + ")";
       }
+      if(j!=vec.at(i).size()-1)
       s += ">,";
+      else s+=">";
     }
+    if (i==vec.size()-1){
+      s+="]";
+    }
+    else{
     s += "\n";
+    }
   }
   cout << s << endl;
 }
@@ -87,29 +94,22 @@ int length = graph.matrix.at(line).at(ind).second.size(); //KM vector length
 
 
     string temp_unit = graph.matrix.at(line).at(ind).second.at(i).first;
-    cout<<i<<" im about to insert the unit: " << temp_unit << endl;
     conversion= graph.matrix.at(line).at(ind).second.at(i).second;
-    cout<<i<<" first conversion is: " << conversion << endl;
     int temp_ind = findIndex(graph,line,temp_unit);
-    cout<<i<<" index of unit is located at line: " << temp_ind << endl;
 
     int temp_length = graph.matrix.at(line).at(temp_ind).second.size();
 
 
     for(int j=0;j<temp_length;j++){
       string temp_name = graph.matrix.at(line).at(temp_ind).second.at(j).first;
-      cout<<"now we are running inside the vector at unit :"<< temp_name<<endl;
       if(temp_name!=left_unit && temp_name!=temp_unit){
         conversion*=graph.matrix.at(line).at(temp_ind).second.at(j).second;
         graph.matrix.at(line).at(ind).second.push_back(make_pair(temp_name,conversion));
-        cout<<"("<<temp_name<<"," << conversion<<")"<<endl;;
         vec_length++;
         conversion/=graph.matrix.at(line).at(temp_ind).second.at(j).second;
       }
     }
   }
-  cout<<"~~~~~~~~test case:"<<endl;
-  print(graph);
   for(int i =0; i<graph.matrix.at(line).at(ind).second.size();i++){
     if (graph.matrix.at(line).at(ind).second.at(i).first==right_unit){
       cout<<" hello:" << graph.matrix.at(line).at(ind).second.at(i).second << endl;
@@ -166,9 +166,7 @@ void insert2units(vector<string> &units, graph &graph, int &i)
 void insert1unit(vector<string> &units, graph &graph, int &i)
 {
   int pointer;
-  int index;
   double conv1 = stod(units.at(i + 3));
-  double conv2 = 1 / stod(units.at(i + 3));
   string unit1 = units.at(i + 1);
   string unit2 = units.at(i + 4);
   pair<string, int> left_unit;
@@ -189,28 +187,23 @@ void insert1unit(vector<string> &units, graph &graph, int &i)
     unit2 = units.at(i + 1);
     //find where at which line am i
     pointer = graph.umap.at(unit1);
-    //conversions
-    // conv1 = stod(units.at(i + 3));
-    // conv2 = 1 / stod(units.at(i + 3));
+    conv1 = 1/stod(units.at(i + 3));
   }
 
-  pair<string, double> curr_conversion(unit1, conv2);
-  // ~~~ 2
+  pair<string, double> curr_conversion(unit1, 1/conv1); //a pair that will be added
   add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
 
   //give the new vector a name
-  // ~~~ 3
   add_to_existing_vec.first = unit2;
   add_to_existing_vec.second = add_to_pair;
 
-  // ~~~ 4
   //push to the matrix the final vector
   graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
 
   //create pair to add to the existing vector of the other unit
-  // ~~~ 5
   left_unit.first = unit2;
   left_unit.second = pointer; 
+  
   int ind;
   for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
   {
@@ -260,7 +253,7 @@ int main()
   initGraph(units, graph);
  
   print(graph);
-  double d = connect(graph,1,"ton","g"); //1000000
+  double d = connect(graph,2,"hour","kg"); //1000000
   cout<<d<<endl;
 
   
