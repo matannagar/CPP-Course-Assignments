@@ -9,6 +9,8 @@ using namespace std;
 struct graph
 {
   vector<vector<pair<string, vector<pair<string, double>>>>> matrix;
+  unordered_map<string, int> umap; 
+  unordered_map<string, int> lomap;
 };
 
 std::vector<string> readText(const string &file_name)
@@ -48,49 +50,77 @@ void print(const graph &graph)
   cout << s << endl;
 }
 
-void update(graph &graph, int line, double conv1, double conv2, const string &unit1, const string &unit2)
+int findIndex(graph &graph, int line, string unit){
+for (size_t i = 0; i < graph.matrix.at(line).size(); i++)
 {
-  int ind1;
-  int ind2;
-  int unit_length1;
-  int unit_length2;
-  int vec_length = graph.matrix.at(line).size();
-  for (int i = 0; i < vec_length; i++)
-  {
-
-    if (graph.matrix.at(line).at(i).first == unit1)
-    {
-      ind1 = i;
-      unit_length1 = graph.matrix.at(line).at(i).second.size();
-    }
-    if (graph.matrix.at(line).at(i).first == unit2)
-    {
-      ind1 = i;
-      unit_length1 = graph.matrix.at(line).at(i).second.size();
-    }
-  }
-
-  for (int i = 0; i < unit_length1; i++)
-  {
-    string s = graph.matrix.at(line).at(ind2).second.at(i).first;
-    double d = graph.matrix.at(line).at(ind2).second.at(i).second;
-    if (s != unit2)
-    {
-      graph.matrix.at(line).at(ind1).second.push_back(make_pair(s, conv1 * d));
-    }
-  }
-  for (int i = 0; i < unit_length2; i++)
-  {
-    string s = graph.matrix.at(line).at(ind1).second.at(i).first;
-    double d = graph.matrix.at(line).at(ind1).second.at(i).second;
-    if (s != unit1)
-    {
-      graph.matrix.at(line).at(ind2).second.push_back(make_pair(s, conv1 * d));
-    }
+  if (graph.matrix.at(line).at(i).first==unit){
+    return i;
   }
 }
+return -1;
+}
 
-void insert2units(vector<string> &units, graph &graph, int &i, unordered_map<string, int> &umap)
+double connect(graph &graph, int line, string left_unit, string right_unit)
+{
+  int out_vector = graph.matrix.at(line).size();
+  double conversion=-10;
+  int ind = 0;
+  for (size_t i = 0; i < graph.matrix.at(line).size(); i++)
+  {
+    if (graph.matrix.at(line).at(i).first==left_unit){ 
+      ind=i;
+      break;
+      }
+  }
+
+int length = graph.matrix.at(line).at(ind).second.size(); //KM vector length
+  //check if KM has the right_unit
+  for (int j = 0 ; j<length;j++ ){
+    if(graph.matrix.at(line).at(ind).second.at(j).first==right_unit){
+      return graph.matrix.at(line).at(ind).second.at(j).second;}
+  }
+
+  //THIS IS KM VECTOR
+  vector<pair<string,double>> temp = graph.matrix.at(line).at(ind).second;
+  int vec_length = temp.size();
+  for (int i=0; i<graph.matrix.at(line).size();i++){
+
+
+    string temp_unit = graph.matrix.at(line).at(ind).second.at(i).first;
+    cout<<i<<" im about to insert the unit: " << temp_unit << endl;
+    conversion= graph.matrix.at(line).at(ind).second.at(i).second;
+    cout<<i<<" first conversion is: " << conversion << endl;
+    int temp_ind = findIndex(graph,line,temp_unit);
+    cout<<i<<" index of unit is located at line: " << temp_ind << endl;
+
+    int temp_length = graph.matrix.at(line).at(temp_ind).second.size();
+
+
+    for(int j=0;j<temp_length;j++){
+      string temp_name = graph.matrix.at(line).at(temp_ind).second.at(j).first;
+      cout<<"now we are running inside the vector at unit :"<< temp_name<<endl;
+      if(temp_name!=left_unit && temp_name!=temp_unit){
+        conversion*=graph.matrix.at(line).at(temp_ind).second.at(j).second;
+        graph.matrix.at(line).at(ind).second.push_back(make_pair(temp_name,conversion));
+        cout<<"("<<temp_name<<"," << conversion<<")"<<endl;;
+        vec_length++;
+        conversion/=graph.matrix.at(line).at(temp_ind).second.at(j).second;
+      }
+    }
+  }
+  cout<<"~~~~~~~~test case:"<<endl;
+  print(graph);
+  for(int i =0; i<graph.matrix.at(line).at(ind).second.size();i++){
+    if (graph.matrix.at(line).at(ind).second.at(i).first==right_unit){
+      cout<<" hello:" << graph.matrix.at(line).at(ind).second.at(i).second << endl;
+      return graph.matrix.at(line).at(ind).second.at(i).second;
+    }
+  }
+  
+  return conversion;
+}
+
+void insert2units(vector<string> &units, graph &graph, int &i)
 {
   double conv1 = stod(units.at(i + 3));
   double conv2 = 1 / stod(units.at(i + 3));
@@ -128,11 +158,12 @@ void insert2units(vector<string> &units, graph &graph, int &i, unordered_map<str
   //mark which units were added to the list with the index of the line
   pair<string, int> left_unit(units.at(i + 1), graph.matrix.size() - 1);
   pair<string, int> right_unit(units.at(i + 4), graph.matrix.size() - 1);
-  umap.insert(left_unit);
-  umap.insert(right_unit);
+  graph.umap.insert(left_unit);
+  graph.umap.insert(right_unit);
+  
 }
 
-void insert1unit(vector<string> &units, graph &graph, int &i, unordered_map<string, int> &umap)
+void insert1unit(vector<string> &units, graph &graph, int &i)
 {
   int pointer;
   int index;
@@ -143,47 +174,12 @@ void insert1unit(vector<string> &units, graph &graph, int &i, unordered_map<stri
   pair<string, int> left_unit;
   pair<string, int> right_unit;
   pair<string, vector<pair<string, double>>> add_to_existing_vec; // add new unit to line in matrix
-  vector<pair<string, double>> add_to_pair;// vec inside the pair
-  
+  vector<pair<string, double>> add_to_pair;                       // vec inside the pair
+
   //if the right unit is missing:
-  if (umap.count(units.at(i + 4)) == 0)
+  if (graph.umap.count(units.at(i + 4)) == 0)
   {
-    pointer = umap.at(unit1); // at which line am I
-
-    
-    //tells us at what line we should add the new pair
-    // create a new pair to add to vec
-    // // ~~~ 1
-    // pair<string, double> curr_conversion(unit1, conv2);
-    // // ~~~ 2
-    // add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
-
-    // //give the new vector a name
-    // // ~~~ 3
-    // add_to_existing_vec.first = unit2;
-    // add_to_existing_vec.second = add_to_pair;
-
-    // // ~~~ 4
-    // //push to the matrix the final vector
-    // graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
-
-    // //create pair to add to the existing vector of the other unit
-    // // ~~~ 5
-    // left_unit.first = unit2;
-    // left_unit.second = pointer;
-
-    // //find my index !!TERRIBLE
-    // // ~~~ 6
-    // int ind;
-    // for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
-    // {
-    //   if (graph.matrix.at(pointer).at(i).first == unit1)
-    //     ind = i;
-    // }
-
-    // // ~~~ 7
-    // pair<string, double> left_conversion(unit2, conv1); //(m,1000)
-    // graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
+    pointer = graph.umap.at(unit1); // at which line am I
   }
 
   //if the left unit is missing
@@ -192,82 +188,39 @@ void insert1unit(vector<string> &units, graph &graph, int &i, unordered_map<stri
     unit1 = units.at(i + 4);
     unit2 = units.at(i + 1);
     //find where at which line am i
-    pointer = umap.at(unit1);
+    pointer = graph.umap.at(unit1);
     //conversions
-    conv1 = stod(units.at(i + 3));
-    conv2 = 1 / stod(units.at(i + 3));
-    //create the conversion pair
-    // // ~~~ 1
-    // pair<string, double> curr_conversion(unit2, conv1);
-
-    // // create a new pair to add to vec
-    // // ~~~ 2
-    // add_to_pair.push_back(curr_conversion);
-    // // setting the new pair
-    // // ~~~ 3
-    // add_to_existing_vec.first = unit1;
-    // add_to_existing_vec.second = add_to_pair;
-
-    // // ~~~ 4
-    // //this is the pair we will push insde vec
-    // graph.matrix.at(pointer).push_back(add_to_existing_vec);
-
-    // // ~~~ 5
-    // // add pair to the existing vector
-    // left_unit.first = unit1;
-    // left_unit.second = pointer;
-
-    // //find my index !!TERRIBLE
-    // // ~~~ 6
-    // int ind;
-    // for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
-    // {
-    //   if (graph.matrix.at(pointer).at(i).first == unit2)
-    //     ind = i;
-    // }
-    // // ~~~ 7
-    // pair<string, double> left_conversion(unit1, conv2); //(m,1000)
-    // graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
+    // conv1 = stod(units.at(i + 3));
+    // conv2 = 1 / stod(units.at(i + 3));
   }
-  
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-  // ~~~ 1
-    pair<string, double> curr_conversion(unit1, conv2);
-    // ~~~ 2
-    add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
 
-    //give the new vector a name
-    // ~~~ 3
-    add_to_existing_vec.first = unit2;
-    add_to_existing_vec.second = add_to_pair;
+  pair<string, double> curr_conversion(unit1, conv2);
+  // ~~~ 2
+  add_to_pair.push_back(curr_conversion); // created a new conversion list and added the curr conversion
 
-    // ~~~ 4
-    //push to the matrix the final vector
-    graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
+  //give the new vector a name
+  // ~~~ 3
+  add_to_existing_vec.first = unit2;
+  add_to_existing_vec.second = add_to_pair;
 
-    //create pair to add to the existing vector of the other unit
-    // ~~~ 5
-    left_unit.first = unit2;
-    left_unit.second = pointer;
+  // ~~~ 4
+  //push to the matrix the final vector
+  graph.matrix.at(pointer).push_back(add_to_existing_vec); // add pair to the existing vecto
 
-    //find my index !!TERRIBLE
-    // ~~~ 6
-    int ind;
-    for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
-    {
-      if (graph.matrix.at(pointer).at(i).first == unit1)
-        ind = i;
-    }
+  //create pair to add to the existing vector of the other unit
+  // ~~~ 5
+  left_unit.first = unit2;
+  left_unit.second = pointer; 
+  int ind;
+  for (int i = 0; i < graph.matrix.at(pointer).size(); i++)
+  {
+    if (graph.matrix.at(pointer).at(i).first == unit1)
+      ind = i;
+  }
 
-    // ~~~ 7
-    pair<string, double> left_conversion(unit2, conv1); //(m,1000)
-    graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  
-  umap.insert(left_unit);
-  // update(graph, pointer, conv1, conv2, unit1, unit2);
+  pair<string, double> left_conversion(unit2, conv1); //(m,1000)
+  graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
+  graph.umap.insert(left_unit);
 }
 
 graph &initGraph(vector<string> &units, graph &graph)
@@ -275,7 +228,7 @@ graph &initGraph(vector<string> &units, graph &graph)
   int count = 0;
   //list of units inserted up to now
   vector<pair<string, int>> graph_units;
-  unordered_map<string, int> umap;
+  
 
   for (int i = 0; i < units.size(); i += 5)
   {
@@ -284,16 +237,16 @@ graph &initGraph(vector<string> &units, graph &graph)
     string unit1 = units.at(i + 1);
     string unit2 = units.at(i + 4);
 
-    if (umap.count(units.at(i + 1)) == 0 && umap.count(units.at(i + 4)) == 0)
+    if (graph.umap.count(units.at(i + 1)) == 0 && graph.umap.count(units.at(i + 4)) == 0)
     {
-      insert2units(units, graph, i, umap);
+      insert2units(units, graph, i);
     }
-    else if (umap.count(units.at(i + 1)) == 0 || umap.count(units.at(i + 4)) == 0)
+    else if (graph.umap.count(units.at(i + 1)) == 0 || graph.umap.count(units.at(i + 4)) == 0)
     {
-      insert1unit(units, graph, i, umap);
+      insert1unit(units, graph, i);
     }
   }
-  for (auto &x : umap)
+  for (auto &x : graph.umap)
     cout << x.first << ": " << x.second << endl;
 
   return graph;
@@ -301,9 +254,16 @@ graph &initGraph(vector<string> &units, graph &graph)
 
 int main()
 {
+   
   graph graph;
   vector<string> units = readText("test.txt");
   initGraph(units, graph);
+ 
   print(graph);
+  double d = connect(graph,1,"ton","g"); //1000000
+  cout<<d<<endl;
+
+  
+  
   return 0;
 }
