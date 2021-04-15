@@ -11,7 +11,22 @@ using namespace std;
 
 namespace ariel
 {
+    NumberWithUnits::NumberWithUnits(double num, string unit)
+    {
+        std::unordered_map<std::string, uint>::const_iterator got = graph.umap.find(unit);
 
+        if (got == graph.umap.end())
+        {
+            throw std::runtime_error("Unit is not present!");
+        }
+        else
+        {
+            this->num = num;
+            this->unit = unit;
+        }
+    }
+
+    //SHOULD DELETE THIS
     double NumberWithUnits::getNum()
     {
         return num;
@@ -24,7 +39,7 @@ namespace ariel
     {
         this->num = x;
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void NumberWithUnits::read_units(std::ifstream &file)
     {
         if (file.is_open())

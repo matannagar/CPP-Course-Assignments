@@ -23,18 +23,14 @@ namespace ariel
     static vector<string> units;
     static Graph graph;
 
-
     class NumberWithUnits
     {
 
     public:
         string unit;
         double num;
-        NumberWithUnits(double num, string unit)
-        {
-            this->num = num;
-            this->unit = unit;
-        }
+        NumberWithUnits(double num, string unit);
+        
         NumberWithUnits();
 
         double getNum();
@@ -44,7 +40,7 @@ namespace ariel
         static void read_units(std::ifstream &file);
 
         friend NumberWithUnits operator+(const NumberWithUnits &f1, const NumberWithUnits &f2);
-        friend NumberWithUnits operator+=(NumberWithUnits &f1,const NumberWithUnits &f2);
+        friend NumberWithUnits operator+=(NumberWithUnits &f1, const NumberWithUnits &f2);
         friend NumberWithUnits operator+(const NumberWithUnits &f1);
 
         friend NumberWithUnits operator-(const NumberWithUnits &f1, const NumberWithUnits &f2);

@@ -1,9 +1,5 @@
 1 km = 1000 m
 1 m = 100 cm
-1 cm = 2 inch
-1 inch = 2 mm
-1 mm = 2 gold
-1 diamond = 0.5 gold
 1 kg = 1000 g
 1 ton = 1000 kg
 1 hour = 60 min
