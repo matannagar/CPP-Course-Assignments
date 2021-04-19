@@ -33,7 +33,6 @@ namespace ariel
 
         NumberWithUnits();
 
-        void setNum(double x);
 
         static void read_units(std::ifstream &file);
 

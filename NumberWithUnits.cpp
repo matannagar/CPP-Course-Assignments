@@ -24,10 +24,6 @@ namespace ariel
         this->unit = unit;
     }
 
-    void NumberWithUnits::setNum(double x)
-    {
-        this->num = x;
-    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void NumberWithUnits::read_units(std::ifstream &file)
     {
@@ -117,8 +113,6 @@ namespace ariel
         double conversion=0.0;
         unordered_map<string, uint> existing_units;
         existing_units[left_unit] = 0;
-        try
-        {
             if (graph.umap.at(left_unit) == graph.umap.at(right_unit))
             {
                 uint line = graph.umap.at(left_unit);
@@ -164,13 +158,10 @@ namespace ariel
             }
             else
             {
-                throw(make_pair(left_unit, right_unit));
+                const std::exception ex;
+                throw(ex);
             }
-        }
-        catch (pair<string, string> units)
-        {
-            cout << units.first << " is not from unit-verse of " << units.second << endl;
-        }
+     
         return 1 / conversion;
     }
     void NumberWithUnits::insert1unit(vector<string> &units, Graph &graph, uint i)

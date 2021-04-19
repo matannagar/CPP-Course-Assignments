@@ -43,7 +43,7 @@ int main()
 
   try
   {
-    cout << (a + b) << endl;
+    (a + b) ;
   }
   catch (const std::exception &ex)
   {

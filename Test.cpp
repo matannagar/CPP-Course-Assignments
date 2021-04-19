@@ -34,6 +34,7 @@ TEST_CASE("read_units")
     CHECK_NOTHROW(NumberWithUnits j(1, "ILS"));
     //UNAVILABLE UNITS: CASE SENSITIVE
     CHECK_THROWS(NumberWithUnits k(1, "KM"));
+    CHECK_THROWS(NumberWithUnits s(1, "Km"));
     CHECK_THROWS(NumberWithUnits m(1, "M"));
     CHECK_THROWS(NumberWithUnits l(1, "CM"));
     CHECK_THROWS(NumberWithUnits n(1, "TON"));
@@ -79,6 +80,10 @@ TEST_CASE("operator a+b")
     CHECK((a + e).num == 0);
     CHECK((b + e).num == -900);
     CHECK((c + e).num - -99000 < 0.001);
+
+    //connect between unrelated units
+    NumberWithUnits g(1, "ILS");
+    CHECK_THROWS(g + a);
 }
 TEST_CASE("operator a-b")
 {
@@ -107,6 +112,10 @@ TEST_CASE("operator a-b")
     CHECK((a - e).num == 2);
     CHECK((b - e).num == 1100);
     CHECK((c - e).num - 101000.0 < 0.001);
+
+    //connect between unrelated units
+    NumberWithUnits g(1, "ILS");
+    CHECK_THROWS(g - a);
 }
 TEST_CASE("operator a+=b")
 {
@@ -115,14 +124,12 @@ TEST_CASE("operator a+=b")
     NumberWithUnits c(1000, "cm"); //10m , 0.01km
 
     CHECK((a += a).num == 2);
-    // CHECK((a += b).num == 1.1);
-    // CHECK((a += c).num == 1.01);
     CHECK((b += a).num == 2100);
-    // CHECK((b += b).num == 200);
-    // CHECK((b += c).num == 110);
     CHECK((c += a).num - 201000.0 < 0.001);
-    // CHECK((c += b).num == 11000);
-    // CHECK((c += c).num == 2000);
+
+    //connect between unrelated units
+    NumberWithUnits g(1, "ILS");
+    CHECK_THROWS(g += a);
 }
 TEST_CASE("operator a-=b")
 {
@@ -131,14 +138,11 @@ TEST_CASE("operator a-=b")
     NumberWithUnits c(1000, "cm"); //10m , 0.01km
 
     CHECK((a -= a).num == 0);
-    // CHECK((a -= b).num == 0.9);
-    // CHECK((a -= c).num == 0.99);
     CHECK((b -= a).num == 100);
-    // CHECK((b -= b).num == 0);
-    // CHECK((b -= c).num == 90);
     CHECK((c -= a).num == 1000);
-    // CHECK((c -= b).num == -9000);
-    // CHECK((c -= c).num == 0);
+
+    NumberWithUnits g(1, "ILS");
+    CHECK_THROWS(g -= a);
 }
 TEST_CASE("operator + unary")
 {
@@ -330,6 +334,6 @@ TEST_CASE("operator >>")
     NumberWithUnits a{2, "km"}; // 2 kilometers
     istringstream sample_input{"700 [ kg ]"};
     sample_input >> a;
-    CHECK(a.num==700);
-    CHECK(a.unit=="kg");
+    CHECK(a.num == 700);
+    CHECK(a.unit == "kg");
 }
