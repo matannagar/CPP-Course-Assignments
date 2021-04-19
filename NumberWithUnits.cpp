@@ -118,6 +118,7 @@ namespace ariel
     }
     double NumberWithUnits::connect(Graph &graph, string left_unit, string right_unit)
     {
+        if (left_unit==right_unit) return 1;
         double conversion;
         unordered_map<string, uint> existing_units;
         existing_units[left_unit] = 0;
@@ -274,6 +275,7 @@ namespace ariel
 
     NumberWithUnits operator+(const NumberWithUnits &f1, const NumberWithUnits &f2)
     {
+
         double d = NumberWithUnits::connect(graph, f1.unit, f2.unit);
         NumberWithUnits a(f1.num + f2.num * d, f2.unit);
         return a;
