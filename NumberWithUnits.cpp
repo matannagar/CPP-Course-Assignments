@@ -7,34 +7,23 @@
 #include <unordered_map>
 #include <stdexcept>
 
+constexpr int jump = 5;
+
 using namespace std;
 
 namespace ariel
 {
-    NumberWithUnits::NumberWithUnits(double num, string unit)
+    NumberWithUnits::NumberWithUnits(double num, string const &unit)
     {
         std::unordered_map<std::string, uint>::const_iterator got = graph.umap.find(unit);
-
         if (got == graph.umap.end())
         {
             throw std::runtime_error("Unit is not present!");
         }
-        else
-        {
-            this->num = num;
-            this->unit = unit;
-        }
+        this->num = num;
+        this->unit = unit;
     }
 
-    //SHOULD DELETE THIS
-    double NumberWithUnits::getNum()
-    {
-        return num;
-    };
-    string NumberWithUnits::getUnit()
-    {
-        return unit;
-    };
     void NumberWithUnits::setNum(double x)
     {
         this->num = x;
@@ -57,7 +46,7 @@ namespace ariel
         //list of units inserted up to now
         vector<pair<string, int>> graph_units;
 
-        for (unsigned int i = 0; i < units.size(); i += 5)
+        for (unsigned int i = 0; i < units.size(); i += jump)
         {
             std::string unit1 = units.at(i + 1);
             std::string unit2 = units.at(i + 4);
@@ -89,9 +78,13 @@ namespace ariel
                     s += "(" + vec.at(i).at(j).second.at(k).first + "," + to_string(vec.at(i).at(j).second.at(k).second) + ")";
                 }
                 if (j != vec.at(i).size() - 1)
+                {
                     s += ">,";
+                }
                 else
+                {
                     s += ">";
+                }
             }
             if (i == vec.size() - 1)
             {
@@ -104,7 +97,7 @@ namespace ariel
         }
         cout << s << endl;
     }
-    uint NumberWithUnits::findIndex(Graph &graph, string unit)
+    uint NumberWithUnits::findIndex(Graph &graph, string const &unit)
     {
         uint line = graph.umap.at(unit);
         for (size_t i = 0; i < graph.matrix.at(line).size(); i++)
@@ -116,10 +109,12 @@ namespace ariel
         }
         return 0;
     }
-    double NumberWithUnits::connect(Graph &graph, string left_unit, string right_unit)
+    double NumberWithUnits::connect(Graph &graph, string const &left_unit, string const &right_unit)
     {
-        if (left_unit==right_unit) return 1;
-        double conversion;
+        if (left_unit == right_unit){
+            return 1;
+        }
+        double conversion=0.0;
         unordered_map<string, uint> existing_units;
         existing_units[left_unit] = 0;
         try
@@ -131,7 +126,6 @@ namespace ariel
 
                 uint ind = findIndex(graph, left_unit);
                 vector<pair<string, double>> &vec = ver_vec.at(ind).second; //KM_VEC
-                unsigned int length = vec.size();                           //KM vector length
 
                 int vec_length = vec.size();
                 for (unsigned int i = 0; i < ver_vec.size(); i++)
@@ -181,7 +175,7 @@ namespace ariel
     }
     void NumberWithUnits::insert1unit(vector<string> &units, Graph &graph, uint i)
     {
-        uint pointer;
+        uint pointer=0;
         double conv1 = stod(units.at(i + 3));
         string unit1 = units.at(i + 1);
         string unit2 = units.at(i + 4);
@@ -220,11 +214,12 @@ namespace ariel
         left_unit.first = unit2;
         left_unit.second = pointer;
 
-        uint ind;
+        uint ind=0;
         for (unsigned int i = 0; i < graph.matrix.at(pointer).size(); i++)
         {
-            if (graph.matrix.at(pointer).at(i).first == unit1)
+            if (graph.matrix.at(pointer).at(i).first == unit1){
                 ind = i;
+            }
         }
 
         pair<string, double> left_conversion(unit2, conv1); //(m,1000)
@@ -247,8 +242,6 @@ namespace ariel
 
         //each conversion going inside above vector
         pair<string, double> conversion;
-        conv1 = stod(units.at(i + 3));
-        conv2 = 1 / stod(units.at(i + 3));
 
         pair<string, double> right_conversion(units.at(i + 1), conv2); // (km,1\1000)
 
@@ -345,7 +338,7 @@ namespace ariel
         this->num += 1;
         return *this;
     } // prefix: ++a
-    const NumberWithUnits NumberWithUnits::operator++(int)
+     NumberWithUnits NumberWithUnits::operator++(int)
     {
         NumberWithUnits temp = *this;
         ++(this->num);
@@ -357,7 +350,7 @@ namespace ariel
         this->num -= 1;
         return *this;
     } // prefix: --a
-    const NumberWithUnits NumberWithUnits::operator--(int)
+     NumberWithUnits NumberWithUnits::operator--(int)
     {
         NumberWithUnits temp = *this;
         --(this->num);
@@ -381,13 +374,26 @@ namespace ariel
     }
     std::istream &operator>>(std::istream &is, NumberWithUnits &f)
     {
-        int k;
-        while (is >> k)
+        int k=0;
+        is >> k;
+        f.num = k;
+
+        vector<char> str;
+        char z='\0';
+        while (is >> z)
         {
-            k += k;
+            str.push_back(z);
         }
-        cout << "im in" << endl;
-        cout << k << endl;
+        string t;
+        for (uint i = 0; i < str.size(); ++i)
+        {
+            if (str.at(i) != '[' && str.at(i) != ']')
+            {
+                t += str.at(i);
+            }
+        }
+
+        f.unit = t;
         return is;
     }
 }

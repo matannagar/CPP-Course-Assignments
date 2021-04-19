@@ -29,13 +29,11 @@ namespace ariel
     public:
         string unit;
         double num;
-        NumberWithUnits(double num, string unit);
-        
+        NumberWithUnits(double num, string const &unit);
+
         NumberWithUnits();
 
-        double getNum();
         void setNum(double x);
-        string getUnit();
 
         static void read_units(std::ifstream &file);
 
@@ -54,11 +52,11 @@ namespace ariel
         bool operator==(const NumberWithUnits &f) const;
         bool operator!=(const NumberWithUnits &f) const;
 
-        NumberWithUnits &operator++();         // prefix: ++a
-        const NumberWithUnits operator++(int); // postfix: a++
+        NumberWithUnits &operator++();   // prefix: ++a
+        NumberWithUnits operator++(int); // postfix: a++
 
-        NumberWithUnits &operator--();         // prefix: --a
-        const NumberWithUnits operator--(int); // postfix: a--
+        NumberWithUnits &operator--();   // prefix: --a
+        NumberWithUnits operator--(int); // postfix: a--
 
         friend NumberWithUnits operator*(const NumberWithUnits &f1, const double &f2);
         friend NumberWithUnits operator*(const double &f1, const NumberWithUnits &f2);
@@ -68,8 +66,8 @@ namespace ariel
 
         static void initGraph(vector<string> &units, Graph &graph);
         static void print(const Graph &graph);
-        static uint findIndex(Graph &graph, string unit);
-        static double connect(Graph &graph, string left_unit, std::string right_unit);
+        static uint findIndex(Graph &graph, string const &unit);
+        static double connect(Graph &graph, string const &left_unit, std::string const &right_unit);
         static void insert2units(vector<string> &units, Graph &graph, uint i);
         static void insert1unit(vector<string> &units, Graph &graph, uint i);
     };

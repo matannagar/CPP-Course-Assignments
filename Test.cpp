@@ -64,7 +64,7 @@ TEST_CASE("operator a+b")
     CHECK((b + a).num == 1100);
     CHECK((b + b).num == 200);
     CHECK((b + c).num == 110);
-    CHECK((c + a).num == 101000.0);
+    CHECK((c + a).num - 101000.0 < 0.001);
     CHECK((c + b).num == 11000);
     CHECK((c + c).num == 2000);
 
@@ -78,7 +78,7 @@ TEST_CASE("operator a+b")
     NumberWithUnits e(-1, "km"); //10m , 0.01km
     CHECK((a + e).num == 0);
     CHECK((b + e).num == -900);
-    CHECK((c + e).num == -99000);
+    CHECK((c + e).num - -99000 < 0.001);
 }
 TEST_CASE("operator a-b")
 {
@@ -92,7 +92,7 @@ TEST_CASE("operator a-b")
     CHECK((b - a).num == -900);
     CHECK((b - b).num == 0);
     CHECK((b - c).num == 90);
-    CHECK((c - a).num == -99000.000);
+    CHECK((c - a).num - (-99000.0) < 0.001);
     CHECK((c - b).num == -9000);
     CHECK((c - c).num == 0);
 
@@ -106,7 +106,7 @@ TEST_CASE("operator a-b")
     NumberWithUnits e(-1, "km"); //10m , 0.01km
     CHECK((a - e).num == 2);
     CHECK((b - e).num == 1100);
-    CHECK((c - e).num == 101000.000);
+    CHECK((c - e).num - 101000.0 < 0.001);
 }
 TEST_CASE("operator a+=b")
 {
@@ -120,10 +120,9 @@ TEST_CASE("operator a+=b")
     CHECK((b += a).num == 2100);
     // CHECK((b += b).num == 200);
     // CHECK((b += c).num == 110);
-    CHECK((c += a).num == 201000);
+    CHECK((c += a).num - 201000.0 < 0.001);
     // CHECK((c += b).num == 11000);
     // CHECK((c += c).num == 2000);
-    
 }
 TEST_CASE("operator a-=b")
 {
@@ -132,14 +131,14 @@ TEST_CASE("operator a-=b")
     NumberWithUnits c(1000, "cm"); //10m , 0.01km
 
     CHECK((a -= a).num == 0);
-    CHECK((a -= b).num == 0.9);
-    CHECK((a -= c).num == 0.99);
-    CHECK((b -= a).num == -900);
-    CHECK((b -= b).num == 0);
-    CHECK((b -= c).num == 90);
-    CHECK((c -= a).num == -99000);
-    CHECK((c -= b).num == -9000);
-    CHECK((c -= c).num == 0);
+    // CHECK((a -= b).num == 0.9);
+    // CHECK((a -= c).num == 0.99);
+    CHECK((b -= a).num == 100);
+    // CHECK((b -= b).num == 0);
+    // CHECK((b -= c).num == 90);
+    CHECK((c -= a).num == 1000);
+    // CHECK((c -= b).num == -9000);
+    // CHECK((c -= c).num == 0);
 }
 TEST_CASE("operator + unary")
 {
@@ -245,7 +244,7 @@ TEST_CASE("operator a==b")
     CHECK((a == b) == false);
     CHECK((a == c) == false);
 
-    CHECK((b == a) == true);
+    CHECK((b == a) == false);
     CHECK((b == b) == true);
     CHECK((b == c) == false);
 
@@ -317,17 +316,20 @@ TEST_CASE("operator a*d || d*a ")
     NumberWithUnits b(100, "m");   //0.1km , 10,000cm
     NumberWithUnits c(1000, "cm"); //10m , 0.01km
 
-    CHECK((a*3).num == 3);
-    CHECK((b*3).num == 300);
-    CHECK((c*3).num == 3000);
+    CHECK((a * 3).num == 3);
+    CHECK((b * 3).num == 300);
+    CHECK((c * 3).num == 3000);
 
-    CHECK((3*a).num == 3);
-    CHECK((3*b).num == 300);
-    CHECK((3*c).num == 3000);
+    CHECK((3 * a).num == 3);
+    CHECK((3 * b).num == 300);
+    CHECK((3 * c).num == 3000);
 }
-TEST_CASE("operator <<")
-{
-}
+
 TEST_CASE("operator >>")
 {
+    NumberWithUnits a{2, "km"}; // 2 kilometers
+    istringstream sample_input{"700 [ kg ]"};
+    sample_input >> a;
+    CHECK(a.num==700);
+    CHECK(a.unit=="kg");
 }
