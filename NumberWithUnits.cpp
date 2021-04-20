@@ -24,7 +24,6 @@ namespace ariel
         this->unit = unit;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void NumberWithUnits::read_units(std::ifstream &file)
     {
         if (file.is_open())
@@ -107,66 +106,67 @@ namespace ariel
     }
     double NumberWithUnits::connect(Graph &graph, string const &left_unit, string const &right_unit)
     {
-        if (left_unit == right_unit){
+        if (left_unit == right_unit)
+        {
             return 1;
         }
-        double conversion=0.0;
+        double conversion = 0.0;
         unordered_map<string, uint> existing_units;
         existing_units[left_unit] = 0;
-            if (graph.umap.at(left_unit) == graph.umap.at(right_unit))
+        if (graph.umap.at(left_unit) == graph.umap.at(right_unit))
+        {
+            uint line = graph.umap.at(left_unit);
+            vector<pair<string, vector<pair<string, double>>>> &ver_vec = graph.matrix.at(line);
+
+            uint ind = findIndex(graph, left_unit);
+            vector<pair<string, double>> &vec = ver_vec.at(ind).second; //KM_VEC
+
+            int vec_length = vec.size();
+            for (unsigned int i = 0; i < ver_vec.size(); i++)
             {
-                uint line = graph.umap.at(left_unit);
-                vector<pair<string, vector<pair<string, double>>>> &ver_vec = graph.matrix.at(line);
-
-                uint ind = findIndex(graph, left_unit);
-                vector<pair<string, double>> &vec = ver_vec.at(ind).second; //KM_VEC
-
-                int vec_length = vec.size();
-                for (unsigned int i = 0; i < ver_vec.size(); i++)
+                string temp_unit = vec.at(i).first; // looking for the same unit
+                if (temp_unit == right_unit)
                 {
-                    string temp_unit = vec.at(i).first; // looking for the same unit
-                    if (temp_unit == right_unit)
-                    {
-                        return 1 / vec.at(i).second;
-                    }
-                    conversion = vec.at(i).second;
-
-                    uint temp_ind = findIndex(graph, temp_unit);
-                    vector<pair<string, double>> &vec_temp = ver_vec.at(temp_ind).second;
-                    unsigned int temp_length = vec_temp.size();
-
-                    for (unsigned int j = 0; j < temp_length; j++)
-                    {
-                        string temp_name = vec_temp.at(j).first;
-                        if (existing_units.find(temp_name) == existing_units.end())
-                        {
-                            conversion *= vec_temp.at(j).second;
-                            vec.push_back(make_pair(temp_name, conversion));
-                            existing_units[temp_name] = i;
-                            vec_length++;
-                            conversion /= vec_temp.at(j).second;
-                        }
-                    }
+                    return 1 / vec.at(i).second;
                 }
-                for (unsigned int i = 0; i < vec.size(); i++)
+                conversion = vec.at(i).second;
+
+                uint temp_ind = findIndex(graph, temp_unit);
+                vector<pair<string, double>> &vec_temp = ver_vec.at(temp_ind).second;
+                unsigned int temp_length = vec_temp.size();
+
+                for (unsigned int j = 0; j < temp_length; j++)
                 {
-                    if (vec.at(i).first == right_unit)
+                    string temp_name = vec_temp.at(j).first;
+                    if (existing_units.find(temp_name) == existing_units.end())
                     {
-                        return 1 / vec.at(i).second;
+                        conversion *= vec_temp.at(j).second;
+                        vec.push_back(make_pair(temp_name, conversion));
+                        existing_units[temp_name] = i;
+                        vec_length++;
+                        conversion /= vec_temp.at(j).second;
                     }
                 }
             }
-            else
+            for (unsigned int i = 0; i < vec.size(); i++)
             {
-                const std::exception ex;
-                throw(ex);
+                if (vec.at(i).first == right_unit)
+                {
+                    return 1 / vec.at(i).second;
+                }
             }
-     
+        }
+        else
+        {
+            const std::exception ex;
+            throw(ex);
+        }
+
         return 1 / conversion;
     }
     void NumberWithUnits::insert1unit(vector<string> &units, Graph &graph, uint i)
     {
-        uint pointer=0;
+        uint pointer = 0;
         double conv1 = stod(units.at(i + 3));
         string unit1 = units.at(i + 1);
         string unit2 = units.at(i + 4);
@@ -205,10 +205,11 @@ namespace ariel
         left_unit.first = unit2;
         left_unit.second = pointer;
 
-        uint ind=0;
+        uint ind = 0;
         for (unsigned int i = 0; i < graph.matrix.at(pointer).size(); i++)
         {
-            if (graph.matrix.at(pointer).at(i).first == unit1){
+            if (graph.matrix.at(pointer).at(i).first == unit1)
+            {
                 ind = i;
             }
         }
@@ -329,7 +330,7 @@ namespace ariel
         this->num += 1;
         return *this;
     } // prefix: ++a
-     NumberWithUnits NumberWithUnits::operator++(int)
+    NumberWithUnits NumberWithUnits::operator++(int)
     {
         NumberWithUnits temp = *this;
         ++(this->num);
@@ -341,7 +342,7 @@ namespace ariel
         this->num -= 1;
         return *this;
     } // prefix: --a
-     NumberWithUnits NumberWithUnits::operator--(int)
+    NumberWithUnits NumberWithUnits::operator--(int)
     {
         NumberWithUnits temp = *this;
         --(this->num);
@@ -365,12 +366,12 @@ namespace ariel
     }
     std::istream &operator>>(std::istream &is, NumberWithUnits &f)
     {
-        int k=0;
+        int k = 0;
         is >> k;
         f.num = k;
 
         vector<char> str;
-        char z='\0';
+        char z = '\0';
         while (is >> z)
         {
             str.push_back(z);
