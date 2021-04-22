@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 constexpr int jump = 5;
+constexpr double tolerance = 0.0001;
 
 using namespace std;
 
@@ -23,7 +24,10 @@ namespace ariel
         this->num = num;
         this->unit = unit;
     }
-
+    /*
+    insert the entire units in a string vector
+    and use it to intialize our graph
+    */
     void NumberWithUnits::read_units(std::ifstream &file)
     {
         if (file.is_open())
@@ -36,11 +40,16 @@ namespace ariel
         }
         initGraph(units, graph);
     }
+    /*
+    this will initialize our graph by inserting either 2 new units
+    or just 1 new unit, meaning we need to connect it with the other nodes 
+    */
     void NumberWithUnits::initGraph(std::vector<std::string> &units, Graph &graph)
     {
         //list of units inserted up to now
         vector<pair<string, int>> graph_units;
-
+        //based on the permenant positions of the units and conversions we will assign
+        // each new verse as a new vector in our matrix
         for (unsigned int i = 0; i < units.size(); i += jump)
         {
             std::string unit1 = units.at(i + 1);
@@ -56,42 +65,9 @@ namespace ariel
             }
         }
     }
-
-    void NumberWithUnits::print(const Graph &graph)
-    {
-        string s = "[";
-        vector<vector<pair<string, vector<pair<string, double>>>>> vec = graph.matrix;
-
-        for (unsigned int i = 0; i < vec.size(); i++)
-        {
-            s += "Line:" + to_string(i) + " ";
-            for (unsigned int j = 0; j < vec.at(i).size(); j++)
-            {
-                s += "<" + vec.at(i).at(j).first + "::";
-                for (unsigned int k = 0; k < vec.at(i).at(j).second.size(); k++)
-                {
-                    s += "(" + vec.at(i).at(j).second.at(k).first + "," + to_string(vec.at(i).at(j).second.at(k).second) + ")";
-                }
-                if (j != vec.at(i).size() - 1)
-                {
-                    s += ">,";
-                }
-                else
-                {
-                    s += ">";
-                }
-            }
-            if (i == vec.size() - 1)
-            {
-                s += "]";
-            }
-            else
-            {
-                s += "\n";
-            }
-        }
-        cout << s << endl;
-    }
+    /*
+    will help us find the index of the unit in the verse-vector
+    */
     uint NumberWithUnits::findIndex(Graph &graph, string const &unit)
     {
         uint line = graph.umap.at(unit);
@@ -104,6 +80,10 @@ namespace ariel
         }
         return 0;
     }
+    /*
+   connect is the function responsible for the conversion of our given 2 units
+   will also throw exception if 2 units are not from the same verse
+   */
     double NumberWithUnits::connect(Graph &graph, string const &left_unit, string const &right_unit)
     {
         if (left_unit == right_unit)
@@ -113,6 +93,8 @@ namespace ariel
         double conversion = 0.0;
         unordered_map<string, uint> existing_units;
         existing_units[left_unit] = 0;
+
+        //first we check they are from the same unit-verse
         if (graph.umap.at(left_unit) == graph.umap.at(right_unit))
         {
             uint line = graph.umap.at(left_unit);
@@ -155,7 +137,7 @@ namespace ariel
                     return 1 / vec.at(i).second;
                 }
             }
-        }
+        } //if not from unit-verse throw exception
         else
         {
             const std::exception ex;
@@ -164,6 +146,11 @@ namespace ariel
 
         return 1 / conversion;
     }
+
+    /*
+    responsuble for inserting only 1 new units,
+    which means the verse-vector already exists and we need to connect it with each other
+    */
     void NumberWithUnits::insert1unit(vector<string> &units, Graph &graph, uint i)
     {
         uint pointer = 0;
@@ -218,6 +205,10 @@ namespace ariel
         graph.matrix.at(pointer).at(ind).second.push_back(left_conversion);
         graph.umap.insert(left_unit);
     }
+    /*
+    responsible for entering two entire units that has not been in the graph before
+    thus creating a new verse-vector and inserting it into our matrix
+    */
     void NumberWithUnits::insert2units(vector<string> &units, Graph &graph, uint i)
     {
         double conv1 = stod(units.at(i + 3));
@@ -258,73 +249,83 @@ namespace ariel
         graph.umap.insert(right_unit);
     }
 
+    // a+b = c
     NumberWithUnits operator+(const NumberWithUnits &f1, const NumberWithUnits &f2)
     {
-
         double d = NumberWithUnits::connect(graph, f1.unit, f2.unit);
-        NumberWithUnits a(f1.num + f2.num * d, f2.unit);
+        NumberWithUnits a(f1.num + f2.num * d, f1.unit);
         return a;
     }
-
-    NumberWithUnits operator+=(NumberWithUnits &f1, const NumberWithUnits &f2)
+    //a+=b
+    NumberWithUnits& NumberWithUnits::operator+=(const NumberWithUnits &f2)
     {
-        double d = NumberWithUnits::connect(graph, f1.unit, f2.unit);
-        f1.num = f1.num + f2.num * d;
-        return f1;
+        double d = NumberWithUnits::connect(graph, unit, f2.unit);
+        num = num + f2.num * d;
+        return *this;
     }
+
+    //plus unari
     NumberWithUnits operator+(const NumberWithUnits &f1)
     {
         return f1;
-    } //plus unari
-
+    }
+    //a-b=c
     NumberWithUnits operator-(const NumberWithUnits &f1, const NumberWithUnits &f2)
     {
         double d = NumberWithUnits::connect(graph, f1.unit, f2.unit);
-        NumberWithUnits a(f1.num - f2.num * d, f2.unit);
+        NumberWithUnits a(f1.num - f2.num * d, f1.unit);
         return a;
     }
-    NumberWithUnits operator-=(NumberWithUnits &f1, const NumberWithUnits &f2)
+    //a-=b;
+    NumberWithUnits& NumberWithUnits::operator-=(const NumberWithUnits& f2)
     {
-        double d = NumberWithUnits::connect(graph, f1.unit, f2.unit);
-        f1.num = f1.num - f2.num * d;
-        return f1;
+        double d = NumberWithUnits::connect(graph, unit, f2.unit);
+        num = num - f2.num * d;
+        return *this;
     }
+
+    //-(a) = -a
     NumberWithUnits operator-(const NumberWithUnits &f1)
     {
         NumberWithUnits a{-1 * f1.num, f1.unit};
         return a;
     }
-
+    //a<b
     bool NumberWithUnits::operator<(const NumberWithUnits &f) const
     {
         double d = NumberWithUnits::connect(graph, unit, f.unit);
-        return num < f.num * d;
+        return !(*this == f) && num < f.num * d;
     }
+    //a<=b
     bool NumberWithUnits::operator<=(const NumberWithUnits &f) const
     {
         double d = NumberWithUnits::connect(graph, unit, f.unit);
         return num < f.num * d || num == f.num * d;
     }
+    //a>b
     bool NumberWithUnits::operator>(const NumberWithUnits &f) const
     {
         double d = NumberWithUnits::connect(graph, unit, f.unit);
         return num > f.num * d;
     }
+    //a>=b
     bool NumberWithUnits::operator>=(const NumberWithUnits &f) const
     {
         double d = NumberWithUnits::connect(graph, unit, f.unit);
         return num > f.num * d || num == f.num * d;
     }
+    //a==b
     bool NumberWithUnits::operator==(const NumberWithUnits &f) const
     {
         double d = NumberWithUnits::connect(graph, unit, f.unit);
-        return num == f.num * d;
+        return ((-1) * tolerance < num - f.num * d && num - f.num * d < tolerance);
     }
+    //a!=b
     bool NumberWithUnits::operator!=(const NumberWithUnits &f) const
     {
-        return (unit != f.unit) || (num != f.num);
+        return !(*this == f);
     }
-
+    //
     NumberWithUnits &NumberWithUnits::operator++()
     {
         this->num += 1;
@@ -348,12 +349,13 @@ namespace ariel
         --(this->num);
         return temp;
     } // postfix: a--
-
+    //number*double
     NumberWithUnits operator*(const NumberWithUnits &f1, const double &f2)
     {
         NumberWithUnits a{f1.num * f2, f1.unit};
         return a;
     }
+    //double * number
     NumberWithUnits operator*(const double &f1, const NumberWithUnits &f2)
     {
         NumberWithUnits a{f1 * f2.num, f2.unit};
@@ -366,26 +368,28 @@ namespace ariel
     }
     std::istream &operator>>(std::istream &is, NumberWithUnits &f)
     {
-        int k = 0;
-        is >> k;
-        f.num = k;
+        double num = 0;
+        string unit;
+        char leftS = '.', rsign = '.';
 
-        vector<char> str;
-        char z = '\0';
-        while (is >> z)
+        is >> skipws >> num >> leftS >> unit;
+        if (unit.at(unit.length() - 1) == ']')
         {
-            str.push_back(z);
+            unit = unit.substr(0, unit.length() - 1);
         }
-        string t;
-        for (uint i = 0; i < str.size(); ++i)
+        else
         {
-            if (str.at(i) != '[' && str.at(i) != ']')
-            {
-                t += str.at(i);
-            }
+            is >> skipws >> rsign;
         }
 
-        f.unit = t;
+        std::unordered_map<std::string, uint>::const_iterator got = graph.umap.find(unit);
+        if (got == graph.umap.end())
+        {
+            throw std::runtime_error("Unit is not present!");
+        }
+
+        f.num = num;
+        f.unit = unit;
         return is;
     }
 }
