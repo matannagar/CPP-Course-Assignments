@@ -47,15 +47,18 @@ int main()
 
   cout << boolalpha;                                 // print booleans as strings from now on:
   cout << (d > a) << endl;                           // Prints "true" d is 3 KM
+  cout << (d < a) << endl;                           // prints "false"
   cout << (a <= b) << endl;                          // Prints "false"
+  cout << (a >= b) << endl;
   cout << (d == NumberWithUnits{3000, "m"}) << endl; // Prints "true"
   cout << (d == e) << endl;                          // Prints "true"
+  cout << (d != e) << endl;
 
 
 //try to initialize a unit that is not present
     try
   {
-    cout << NumberWithUnits{7,"days"} << endl;
+    cout << NumberWithUnits{7,"day"} << endl;
   }
   catch (const std::exception &ex)
   {
