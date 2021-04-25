@@ -21,9 +21,6 @@ test3: TestRunner.o StudentTest3.o  $(OBJECTS)
 main: Main.o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o main
 
-# demo: Demo.o $(OBJECTS)
-# 	$(CXX) $(CXXFLAGS) $^ -o demo
-
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 
@@ -37,7 +34,7 @@ StudentTest3.cpp:  # Roei Birger
 	curl https://raw.githubusercontent.com/roei-birger/CPP_course_p3/master/Test.cpp > $@
 
 tidy:
-	clang-tidy $(SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-isolate-declaration --warnings-as-errors=-* --
+	clang-tidy $(SOURCES) -extra-arg=-std=c++2a -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-isolate-declaration --warnings-as-errors=-* --
 
 valgrind: test1
 	valgrind --leak-check=full --error-exitcode=99 --tool=memcheck $(VALGRIND_FLAGS) ./test1 
