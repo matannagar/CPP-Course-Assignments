@@ -17,9 +17,7 @@ namespace pandemic
 {
 class Scientist : public Player
     {
-        public:
-        Scientist(Board b, City ci);
-        Scientist(Board b, City ci, int num);
+        using Player::Player;
     };
 }
 

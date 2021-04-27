@@ -16,8 +16,7 @@ namespace pandemic
 {
 class GeneSplicer : public Player
     {
-        public:
-        GeneSplicer(Board b, City ci);
+        using Player::Player;
     };
 }
 

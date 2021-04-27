@@ -17,8 +17,7 @@ namespace pandemic
 {
 class FieldDoctor : public Player
     {
-        public:
-        FieldDoctor(Board b, City ci);
+        using Player::Player;
     };
 }
 
