@@ -22,8 +22,11 @@ namespace pandemic
         map<City, double> board;
 
     public:
-        double operator[](City i) const { return board.at(i); }
-        double &operator[](City i) { return board.at(i); }
+        double operator[](City i) const { return 0; }
+        double &operator[](City i)
+        {
+            return board[i] = 2;
+        }
 
         bool is_clean();
 
