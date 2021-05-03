@@ -20,4 +20,9 @@ namespace pandemic
     {
         return false;
     }
+
+    void Board::remove_cures()
+    {
+    	cout<<"removed cures!"<<endl;
+    }
 }
