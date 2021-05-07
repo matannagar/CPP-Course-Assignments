@@ -10,7 +10,6 @@ namespace pandemic
         // cout << "enered discover cure" << endl;
         if (board.cures_found.at(c))
         {
-            cout << "just return" << endl;
             return;
         }
         //make sure city has facility && at least 5 cards
@@ -28,8 +27,6 @@ namespace pandemic
                         break;
                     }
                 }
-                cout << "~~~~~~~~~~~~~~ecure was just found!" << endl;
-
                 board.cures_found.at(c) = true;
             }
             else

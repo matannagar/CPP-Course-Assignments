@@ -6,6 +6,7 @@ namespace pandemic
 {
     void Scientist::discover_cure(Color c)
     {
+         cout<< "~~~~~~~~~~~~~~~~~~ helllllllllllllllo:" <<endl;
         if (board.cures_found.at(c))
         {
             return;
@@ -20,25 +21,27 @@ namespace pandemic
                 {
                     if (it->second.color == c)
                     {
-                        if (count >= cards_req)
+                        count++;
+                        if (count == cards_req)
                         {
                             break;
                         }
-                        count++;
                     }
                 }
-                if (count >= cards_req) // remove them from my deck
+                cout<<"~~~~~~~~~~~~~~~~~~ num of cards:"<<count<<endl;
+                if (count == cards_req) // remove them from my deck
                 {
                     for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); it++)
                     {
                         if (it->second.color == c)
                         {
-                            myCards.erase(it++);
                             count--;
+                            myCards.erase(it++);
                         }
-                        if (count <= zero_cards)
+                        if (count == zero_cards)
                         {
                             board.cures_found.at(c) = true;
+                            cout<<"cure was found!!"<<endl;
                             break;
                         }
                     }

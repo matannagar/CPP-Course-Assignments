@@ -28,7 +28,6 @@ namespace pandemic
         Player(Board& b, City ci):
         board(b),cur_city(ci),myCards()
         {
-            // b.players.push_back(*this);
         }
 
         virtual void build(); //builds research facility

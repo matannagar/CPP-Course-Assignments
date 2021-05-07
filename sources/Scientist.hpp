@@ -11,12 +11,14 @@ namespace pandemic
 
     public:
         using Player::Player;
+
         Scientist(Board& b, City ci, int num)
             : Player{b, ci},cards_req{num}
         {
         }
-        virtual const string role(){return "Scientist";}
+
         virtual void discover_cure(Color c);
+        virtual const string role(){return "Scientist";}
     };
 }
 

@@ -10,6 +10,7 @@ class Dispatcher : public Player
     {
        public:
        using Player::Player;
+       
        virtual Player& fly_direct(City city); // drop card of dest city
        virtual const string role(){return "Dispatcher";}
     };

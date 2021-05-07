@@ -9,6 +9,7 @@ class FieldDoctor : public Player
     {
         public:
         using Player::Player;
+        
         virtual const string role();
         virtual Player& treat(City c);
     };

@@ -65,7 +65,7 @@ namespace pandemic
     Player &Medic::fly_shuttle(City c)
     {
         update_lo();
-        Player::fly_charter(c);
+        Player::fly_shuttle(c);
         clean_city();
         return *this;
     }

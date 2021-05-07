@@ -22,6 +22,7 @@ namespace pandemic
     }
     void Player::discover_cure(Color c)
     {
+        cout<<"General player cure"<<endl;
         if (board.cures_found.at(c))
         {
             return;
@@ -89,7 +90,7 @@ namespace pandemic
         {
             throw std::runtime_error("TREAT: illegal action: you are not in correct city.");
         }
-        struct town &city = board.cities.at(cur_city);
+        struct town &city = board.cities.at(c);
         if (city.level > 0)
         {
             if (board.cures_found.at(city.color)) //cure  found
@@ -149,6 +150,7 @@ namespace pandemic
         }
         return *this;
     }
+
     Player &Player::fly_charter(City c)
     {
         if (cur_city == c)
@@ -164,10 +166,10 @@ namespace pandemic
         else
         {
             throw std::runtime_error("fly_charter:missing card!");
-            // cout << "fly_charter: missing card!" << endl;
         }
         return *this;
     }
+    
     Player &Player::fly_shuttle(City c)
     {
         if (cur_city == c)
