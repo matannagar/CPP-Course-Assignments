@@ -9,7 +9,7 @@ class GeneSplicer : public Player
     {
         using Player::Player;
         public:
-        virtual const string role(){return "Gene Splicer";}
+        virtual const string role(){return "GeneSplicer";}
         virtual void discover_cure(Color c); 
     };
 }

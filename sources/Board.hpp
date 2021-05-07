@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include <map>
+#include <set>
 // #include "Player.hpp"
 #include "City.hpp"
 #include "Color.hpp"
@@ -35,8 +36,6 @@ namespace pandemic
     public:
         Board()
         {
-            std::cout << "board has been made!" << endl;
-           
             cities.insert(pair<City,town>(City::Algiers,{Color::Black,{City::Madrid,City::Paris,City::Istanbul,City::Cairo},false,false,0}));
             cities.insert(pair<City,town>(City::Atlanta,{Color::Blue,{City::Chicago,City::Miami,City::Washington},false,false,0}));
             cities.insert(pair<City,town>(City::Baghdad,{Color::Black,{City::Tehran,City::Istanbul,City::Cairo,City::Riyadh,City::Karachi},false,false,0}));
@@ -63,7 +62,7 @@ namespace pandemic
             cities.insert(pair<City,town>(City::London,{Color::Blue,{City::NewYork,City::Madrid,City::Essen,City::Paris},false,false,0}));
             cities.insert(pair<City,town>(City::LosAngeles,{Color::Yellow,{City::SanFrancisco,City::Chicago,City::MexicoCity,City::Sydney},false,false,0}));
             cities.insert(pair<City,town>(City::Madrid,{Color::Blue,{City::London,City::NewYork,City::Paris,City::SaoPaulo,City::Algiers},false,false,0}));
-            cities.insert(pair<City,town>(City::Manila,{Color::Red ,{City::Taipei,City::SanFrancisco,City::HoChiMinhCity,City::Sydney},false,false,0}));
+            cities.insert(pair<City,town>(City::Manila,{Color::Red ,{City::Taipei,City::SanFrancisco,City::HoChiMinhCity,City::Sydney,City::HongKong},false,false,0}));
             cities.insert(pair<City,town>(City::MexicoCity,{Color::Yellow,{City::LosAngeles,City::Chicago,City::Miami,City::Lima,City::Bogota},false,false,0}));
             cities.insert(pair<City,town>(City::Miami,{Color::Yellow,{City::Atlanta,City::MexicoCity,City::Washington,City::Bogota},false,false,0}));
             cities.insert(pair<City,town>(City::Milan,{Color::Blue,{City::Essen,City::Paris,City::Istanbul},false,false,0}));
@@ -95,14 +94,14 @@ namespace pandemic
         map<City, town> cities;
         map<Color, bool> cures_found;
         vector<City> sick_cities;
+        set<City> stations;
         vector<City> medics;
         int operator[](City i) const; // get operator
         int &operator[](City i);      // set operator
         bool is_clean();              // checks for disease
         void remove_cures();
+        void remove_stations();
         friend ostream &operator<<(ostream &os, const Board &board);
     };
-
 }
-
 #endif

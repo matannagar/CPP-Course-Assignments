@@ -32,7 +32,7 @@ namespace pandemic
         }
 
         virtual void build(); //builds research facility
-        virtual void discover_cure(Color c); 
+        virtual void discover_cure(Color c);
 
         virtual const string role(); //returns my role
         virtual Player& take_card(City card);

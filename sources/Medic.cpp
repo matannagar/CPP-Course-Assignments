@@ -27,7 +27,7 @@ namespace pandemic
         }
     }
 
-    Player &Medic::treat()
+    Player &Medic::treat(City c)
     {
         struct town &city = board.cities.at(cur_city);
         if (city.level > 0)
@@ -36,7 +36,7 @@ namespace pandemic
         }
         else
         {
-            throw("Treat func: city is already cured!");
+            throw runtime_error("Treat func: city is already cured!");
         }
         return *this;
     }
@@ -45,28 +45,28 @@ namespace pandemic
     {
         update_lo();
         Player::drive(c);
-        this->clean_city();
+        clean_city();
         return *this;
     }
     Player &Medic::fly_direct(City c)
     {
         update_lo();
         Player::fly_direct(c);
-        this->clean_city();
+        clean_city();
         return *this;
     }
     Player &Medic::fly_charter(City c)
     {
         update_lo();
         Player::fly_charter(c);
-        this->clean_city();
+        clean_city();
         return *this;
     }
     Player &Medic::fly_shuttle(City c)
     {
         update_lo();
         Player::fly_charter(c);
-        this->clean_city();
+        clean_city();
         return *this;
     }
 }

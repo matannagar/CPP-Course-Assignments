@@ -25,7 +25,6 @@ namespace pandemic
     }
     ostream &operator<<(ostream &os, const Board &board)
     {
-        cout << "<< operator" << endl;
         return os;
     }
     bool Board::is_clean()
@@ -41,8 +40,14 @@ namespace pandemic
     }
     void Board::remove_cures()
     {
-        for (std::map<Color,bool>::iterator it=cures_found.begin(); it!=cures_found.end(); ++it){
-            it->second=false;
+        for (std::map<Color, bool>::iterator it = cures_found.begin(); it != cures_found.end(); ++it)
+        {
+            it->second = false;
+        }
+    }
+    void Board::remove_stations(){
+        for(const auto& e: stations){
+            cities.at(e).research_facility=false;
         }
     }
 }

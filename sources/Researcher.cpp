@@ -6,7 +6,11 @@ namespace pandemic
 {
     void Researcher::discover_cure(Color c)
     {
-        if (board.cures_found.at(c)){ return;}
+
+        if (board.cures_found.at(c))
+        {
+            return;
+        } //if cure was found do nothing
         int count = 0;
 
         for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); ++it) //count how many reds
@@ -27,17 +31,19 @@ namespace pandemic
                 if (it->second.color == c)
                 {
                     myCards.erase(it++);
-                }
-                else
-                {
-                    ++it;
+                    count--;
+                    if (count <= 0)
+                    {
+                        break;
+                    }
                 }
             }
-            cout << "Researcher: cure was found!" << endl;
         }
         else
         {
             throw runtime_error("Researcher:Could not find cure!");
         }
+        board.cures_found.at(c) = true;
+        
     }
 }
