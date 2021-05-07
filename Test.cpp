@@ -13,7 +13,7 @@ using namespace pandemic;
 #include <string>
 using namespace std; //used to include functions such as memcpy..
 
-TEST_CASE("read_units")
+TEST_CASE("BASIC TESTS")
 {
 	Board board;  // Initialize an empty board (with 0 disease cubes in any city).
 	board[City::Kinshasa] = 3;      // put 3 yellow disease cubes in Kinshasa.
@@ -21,17 +21,6 @@ TEST_CASE("read_units")
 	board[City::MexicoCity] = 3;    // put 3 yellow disease cubes in MexicoCity
 	board[City::HoChiMinhCity] = 1; // put 1 red disease cube in HoChiMinhCity
 	board[City::Chicago] = 1; 
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
-CHECK_NOTHROW(board[City::Kinshasa] = 2);
 CHECK_NOTHROW(board[City::Kinshasa] = 2);
 CHECK_NOTHROW(board[City::Kinshasa] = 2);
 CHECK_NOTHROW(board[City::Kinshasa] = 2);

@@ -1,18 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
+#include "Board.hpp"
 #include "City.hpp"
 #include "Color.hpp"
-#include "Board.hpp"
 
 using namespace std;
 
@@ -20,38 +19,29 @@ namespace pandemic
 {
     class Player
     {
-        City c;
-        Board board;
-        int x;
+        protected:
+        City cur_city;
 
     public:
-        Player(Board b, City ci)
+        Board& board; // should not be here!!
+        map<City, town> myCards; // for testing
+        Player(Board& b, City ci):
+        board(b),cur_city(ci),myCards()
         {
-            board = b;
-            c = ci;
+            // b.players.push_back(*this);
         }
 
-        Player(Board b, City ci, int num)
-        {
-            board = b;
-            c = ci;
-            x = num;
-        }
+        virtual void build(); //builds research facility
+        virtual void discover_cure(Color c); 
 
-        void build();
-        void discover_cure(Color c);
+        virtual const string role(); //returns my role
+        virtual Player& take_card(City card);
+        virtual Player& drive(City city);
+        virtual Player& fly_direct(City city); // drop card of dest city
+        virtual Player& fly_charter(City city); // drop card of src city
+        virtual Player& fly_shuttle(City city); // if src has facility then it can reach dest with facility
+        virtual Player& treat(City city);
 
-        Player take_card(City a);
-
-        string role();
-
-        Player treat(City c);
-        Player drive(City c);
-        Player fly_direct(City c);
-        Player fly_charter(City c);
-        Player fly_shuttle(City c);
-
-        static bool check_cure_discovery(Player player);
     };
 }
 

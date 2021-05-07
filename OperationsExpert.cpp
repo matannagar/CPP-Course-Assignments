@@ -1,15 +1,11 @@
 #include "OperationsExpert.hpp"
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <sstream>
-#include <stdexcept>
 using namespace std;
 
 namespace pandemic
 {
-
+    void OperationsExpert::build()
+    {
+        board.cities.at(cur_city).research_facility = true;
+        cout<<"OE: just built a research facility!"<<endl;
+    }
 }

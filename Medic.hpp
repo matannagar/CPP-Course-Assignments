@@ -1,16 +1,6 @@
 #ifndef MEDIC_H
 #define MEDIC_H
 
-#pragma once
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <sstream>
-#include <stdexcept>
-using namespace std;
-
 #include "Player.hpp"
 
 namespace pandemic
@@ -18,6 +8,16 @@ namespace pandemic
 class Medic : public Player
     {
         using Player::Player;
+        public:
+        void update_lo();
+        void clean_city();
+        
+        virtual const string role(){return "Medic";}
+        virtual Player& treat();
+        virtual Player& drive(City city);
+        virtual Player& fly_direct(City city); // drop card of dest city
+        virtual Player& fly_charter(City city); // drop card of src city
+        virtual Player& fly_shuttle(City city); // if src has facility then it can reach dest with facility
     };
 }
 
