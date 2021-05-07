@@ -6,14 +6,18 @@ namespace pandemic
 {
     void Player::build()
     {
-        if (myCards.count(cur_city) > 0)
+        if (board.stations.find(cur_city) == board.stations.end())//check if station doesnt exist
         {
-            board.cities.at(cur_city).research_facility = true;
-            board.stations.insert(cur_city); // adds cur_city to list of facilitated cities
-        }
-        else
-        {
-            throw("build function could not locate the city card!");
+            if (myCards.count(cur_city) > 0)
+            {
+                board.cities.at(cur_city).research_facility = true;
+                board.stations.insert(cur_city); // adds cur_city to list of facilitated cities
+                myCards.erase(cur_city); // drop card
+            }
+            else
+            {
+                throw("build function could not locate the city card!");
+            }
         }
     }
     void Player::discover_cure(Color c)

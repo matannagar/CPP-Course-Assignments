@@ -7,8 +7,10 @@ namespace pandemic
 {
     void GeneSplicer::discover_cure(Color c)
     {
+        // cout << "enered discover cure" << endl;
         if (board.cures_found.at(c))
         {
+            cout << "just return" << endl;
             return;
         }
         //make sure city has facility && at least 5 cards
@@ -19,14 +21,16 @@ namespace pandemic
                 int count = five_cards;
                 for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); ++it) //count how many cards
                 {
+                    myCards.erase(it++);
+                    count--;
                     if (count == zero_cards)
                     {
                         break;
                     }
-                    myCards.erase(it++);
-                    count--;
                 }
-                board.cures_found.at(c)=true;
+                cout << "~~~~~~~~~~~~~~ecure was just found!" << endl;
+
+                board.cures_found.at(c) = true;
             }
             else
             {
