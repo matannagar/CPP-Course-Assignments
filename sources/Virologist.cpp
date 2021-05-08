@@ -12,17 +12,10 @@ namespace pandemic
         {
             Player::treat(c);
         }
-        else if (myCards.count(c) > 0 && city.level > 0) //check that i have the card and level>0
+        else if (myCards.count(c) > 0 ) //check that i have the card and level>0
         {
-            if (city.cure_found) //cure  found
-            {
-                city.level = 0;
-            }
-            else //cure is found
-            {
-                city.level--;
-                myCards.erase(c);
-            }
+            Player::inner_treat(c);
+            myCards.erase(c);
         }
         else
         {

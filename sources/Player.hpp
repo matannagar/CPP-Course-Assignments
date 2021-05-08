@@ -21,6 +21,8 @@ namespace pandemic
     {
     protected:
         City cur_city;
+        virtual void inner_dis_cure(Color c, int req_cards);
+        virtual void inner_treat(City c);
 
     public:
         Board &board;            // should not be here!!
@@ -31,7 +33,6 @@ namespace pandemic
 
         virtual void build(); //builds research facility
         virtual void discover_cure(Color c);
-        virtual void inner_dis_cure(Color c, int req_cards);
         virtual string role(); //returns my role
         virtual Player &take_card(City card);
         virtual Player &drive(City city);
