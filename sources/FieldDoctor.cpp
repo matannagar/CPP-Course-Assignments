@@ -18,21 +18,6 @@ namespace pandemic
             //check if c is a neighbor of my city
             if (std::find(neighbors.begin(), neighbors.end(), c) != neighbors.end())
             {
-                // if (city.level > 0)
-                // {
-                //     if (city.cure_found) //cure  found
-                //     {
-                //         city.level = 0;
-                //     }
-                //     else //cure not found
-                //     {
-                //         city.level--;
-                //     }
-                // }
-                // else
-                // {
-                //     throw std::runtime_error("Treat FD: city is already cured!");
-                // }
                 Player::inner_treat(c);
             }
             else
