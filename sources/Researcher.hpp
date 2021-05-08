@@ -10,7 +10,7 @@ class Researcher : public Player
         public:
         using Player::Player;
         virtual void discover_cure(Color c);
-        virtual const string role(){return "Researcher";}
+        virtual string role(){return "Researcher";}
     };
 }
 

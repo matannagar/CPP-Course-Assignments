@@ -9,7 +9,7 @@ class Virologist : public Player
     {
         using Player::Player;
         public:
-        virtual const string role(){return "Virologist";}
+        virtual string role(){return "Virologist";}
         virtual Player& treat(City c);
     };
 }

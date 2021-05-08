@@ -13,7 +13,7 @@ class Medic : public Player
         void update_lo();
         void clean_city();
         
-        virtual const string role(){return "Medic";}
+        virtual string role(){return "Medic";}
         virtual Player& treat(City c);
         virtual Player& drive(City city);
         virtual Player& fly_direct(City city); // drop card of dest city

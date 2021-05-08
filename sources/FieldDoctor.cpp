@@ -4,7 +4,6 @@ using namespace std;
 
 namespace pandemic
 {
-    const string FieldDoctor::role() { return "FieldDoctor"; }
 
     Player &FieldDoctor::treat(City c)
     {

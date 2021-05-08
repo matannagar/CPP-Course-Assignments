@@ -24,10 +24,10 @@ namespace pandemic
                     count--;
                     if (count == zero_cards)
                     {
-                        break;
+                        board.cures_found.at(c) = true;
+                        return;
                     }
                 }
-                board.cures_found.at(c) = true;
             }
             else
             {

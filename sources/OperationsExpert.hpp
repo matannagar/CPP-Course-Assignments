@@ -10,7 +10,7 @@ namespace pandemic
     public:
         using Player::Player;
         virtual void build();
-        virtual const string role() { return "OperationsExpert"; }
+        virtual string role() { return "OperationsExpert"; }
     };
 }
 

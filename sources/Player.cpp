@@ -1,18 +1,19 @@
 #include "Player.hpp"
 constexpr int five_cards = 5;
+constexpr int zero_cards = 0;
 using namespace std;
 
 namespace pandemic
 {
     void Player::build()
     {
-        if (board.stations.find(cur_city) == board.stations.end())//check if station doesnt exist
+        if (board.stations.find(cur_city) == board.stations.end()) //check if station doesnt exist
         {
             if (myCards.count(cur_city) > 0)
             {
                 board.cities.at(cur_city).research_facility = true;
                 board.stations.insert(cur_city); // adds cur_city to list of facilitated cities
-                myCards.erase(cur_city); // drop card
+                myCards.erase(cur_city);         // drop card
             }
             else
             {
@@ -22,173 +23,172 @@ namespace pandemic
     }
     void Player::discover_cure(Color c)
     {
-        cout<<"General player cure"<<endl;
         if (board.cures_found.at(c))
         {
             return;
         }
-        int count = 0;
-        if (board.cities.at(cur_city).research_facility && myCards.size() >= five_cards) //make sure city has facility && enough cards in hand
+
+        if (board.cities.at(cur_city).research_facility)
         {
-            for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); ++it) //count how many reds
+            inner_dis_cure(c, five_cards);
+        }
+        else
+        {
+            throw std::runtime_error("city does not have facility!");
+        }
+    }
+    void Player::inner_dis_cure(Color c, int req_cards)
+    {
+        int count = 0;
+
+        if (myCards.size() >= req_cards) // make sure there are enough cards
+        {
+            for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); it++) //count how many reds
             {
                 if (it->second.color == c)
                 {
                     count++;
-                    if (count == five_cards)
-                    {
-                        break;
-                    }
                 }
             }
-            if (count == five_cards) // remove them from my deck
+            if (count >= req_cards) // found enough cards from same kind
             {
-                for (map<City, town>::iterator it = myCards.begin(); it != myCards.end(); ++it)
+                count = req_cards;
+                for (auto it = myCards.cbegin(); it != myCards.cend();) //iterate cards to remove them
                 {
                     if (it->second.color == c)
                     {
-                        myCards.erase(it++);
                         count--;
-                        if (count <= 0)
-                        {
-                            break;
-                        }
+                        myCards.erase(it++);
                     }
-                }
-                board.cures_found.at(c) = true;
-                //loop through medics in dif cities, check if city is same color as new cure
-                //if so, cure the city (cuz it has a docotor in it)
-                for (uint i = 0; i < board.medics.size(); i++)
-                {
-                    if (board.cities.at(board.medics.at(i)).color == c)
+                    else
                     {
-                        board.cities.at(board.medics.at(i)).level = 0;
+                        ++it;
+                    }
+                    if (count == zero_cards) //
+                    {
+                        board.cures_found.at(c) = true;
+                        return;
                     }
                 }
             }
-            else
-            {
-                throw std::runtime_error("find_cure: not enough colored cards!");
-            }
         }
         else
         {
-            throw std::runtime_error("find_cure: not enough cards || city does not have facility!");
+            throw std::runtime_error("find_cure: not enough colored cards!");
         }
-    }
+}
+Player &Player::take_card(City card)
+{
+    //assuming the system always work
+    myCards.insert(pair<City, town>(card, board.cities.at(card)));
+    return (*this);
+}
 
-    Player &Player::take_card(City card)
+Player &Player::treat(City c)
+{
+    if (c != cur_city)
     {
-        //assuming the system always work
-        myCards.insert(pair<City, town>(card, board.cities.at(card)));
-        return (*this);
+        throw std::runtime_error("TREAT: illegal action: you are not in correct city.");
     }
-
-    Player &Player::treat(City c)
+    struct town &city = board.cities.at(c);
+    if (city.level > 0)
     {
-        if (c != cur_city)
+        if (board.cures_found.at(city.color)) //cure  found
         {
-            throw std::runtime_error("TREAT: illegal action: you are not in correct city.");
+            city.level = 0;
         }
-        struct town &city = board.cities.at(c);
-        if (city.level > 0)
+        else //cure not found
         {
-            if (board.cures_found.at(city.color)) //cure  found
-            {
-                city.level = 0;
-            }
-            else //cure not found
-            {
-                city.level--;
-            }
+            city.level--;
         }
-        else
-        {
-            throw std::runtime_error("Treat func: city is already cured!");
-        }
-        return *this;
     }
-    Player &Player::drive(City c)
+    else
     {
-        if (cur_city == c)
-        {
-            throw std::runtime_error("Can't drive from city to itself!");
-        };
-
-        struct town &city = board.cities.at(cur_city);
-
-        std::vector<City>::iterator it;
-
-        it = find(city.neighbors.begin(), city.neighbors.end(), c);
-        if (it != city.neighbors.end())
-        {
-            cur_city = c;
-        }
-        else
-        {
-            throw std::runtime_error("Drive:oops I am not a neighbor!");
-            // cout << "Drive fun:oops I am not a neighbor!" << endl;
-        };
-        return *this;
+        throw std::runtime_error("Treat func: city is already cured!");
     }
-    Player &Player::fly_direct(City c)
+    return *this;
+}
+Player &Player::drive(City c)
+{
+    if (cur_city == c)
     {
-        if (cur_city == c)
-        {
-            throw std::runtime_error("Can't fly from city to itself!");
-        };
+        throw std::runtime_error("Can't drive from city to itself!");
+    };
 
-        if (myCards.count(c) > 0)
-        {
-            cur_city = c;
-            myCards.erase(c);
-        }
-        else
-        {
-            throw std::runtime_error("fly_direct:missing card!");
-            // cout << "fly_direct: missing card!" << endl;
-        }
-        return *this;
-    }
+    struct town &city = board.cities.at(cur_city);
 
-    Player &Player::fly_charter(City c)
-    {
-        if (cur_city == c)
-        {
-            throw std::runtime_error("Can't fly from city to itself!");
-        };
+    std::vector<City>::iterator it;
 
-        if (myCards.count(cur_city) > 0)
-        {
-            myCards.erase(cur_city);
-            cur_city = c;
-        }
-        else
-        {
-            throw std::runtime_error("fly_charter:missing card!");
-        }
-        return *this;
-    }
-    
-    Player &Player::fly_shuttle(City c)
+    it = find(city.neighbors.begin(), city.neighbors.end(), c);
+    if (it != city.neighbors.end())
     {
-        if (cur_city == c)
-        {
-            throw std::runtime_error("Can't fly from city to itself!");
-        };
-        map<City, town> &map = board.cities;
-        if (map.at(cur_city).research_facility && map.at(c).research_facility)
-        {
-            cur_city = c;
-        }
-        else
-        {
-            throw std::runtime_error("fly_shuttle: one of the cities does not have a facility!");
-        }
-        return *this;
+        cur_city = c;
     }
-    const string Player::role()
+    else
     {
-        return "general player";
+        throw std::runtime_error("Drive:oops I am not a neighbor!");
+        // cout << "Drive fun:oops I am not a neighbor!" << endl;
+    };
+    return *this;
+}
+Player &Player::fly_direct(City c)
+{
+    if (cur_city == c)
+    {
+        throw std::runtime_error("Can't fly from city to itself!");
+    };
+
+    if (myCards.count(c) > 0)
+    {
+        cur_city = c;
+        myCards.erase(c);
     }
+    else
+    {
+        throw std::runtime_error("fly_direct:missing card!");
+        // cout << "fly_direct: missing card!" << endl;
+    }
+    return *this;
+}
+
+Player &Player::fly_charter(City c)
+{
+    if (cur_city == c)
+    {
+        throw std::runtime_error("Can't fly from city to itself!");
+    };
+
+    if (myCards.count(cur_city) > 0)
+    {
+        myCards.erase(cur_city);
+        cur_city = c;
+    }
+    else
+    {
+        throw std::runtime_error("fly_charter:missing card!");
+    }
+    return *this;
+}
+
+Player &Player::fly_shuttle(City c)
+{
+    if (cur_city == c)
+    {
+        throw std::runtime_error("Can't fly from city to itself!");
+    };
+    map<City, town> &map = board.cities;
+    if (map.at(cur_city).research_facility && map.at(c).research_facility)
+    {
+        cur_city = c;
+    }
+    else
+    {
+        throw std::runtime_error("fly_shuttle: one of the cities does not have a facility!");
+    }
+    return *this;
+}
+string Player::role()
+{
+    return "general player";
+}
 }
