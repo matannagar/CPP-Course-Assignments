@@ -11,14 +11,11 @@
 
 #include <map>
 #include <set>
-// #include "Player.hpp"
 #include "City.hpp"
 #include "Color.hpp"
 using namespace std;
-/*
-1. check signatures
-2. should the map be public ? 
-*/
+
+
 namespace pandemic
 {
     class town
@@ -36,6 +33,7 @@ namespace pandemic
     public:
         Board()
         {
+            cities.insert(pair<City,town>(City::NewYork,{Color::Blue,{City::Montreal,City::Washington,City::London,City::Madrid},false,false,0}));
             cities.insert(pair<City,town>(City::Algiers,{Color::Black,{City::Madrid,City::Paris,City::Istanbul,City::Cairo},false,false,0}));
             cities.insert(pair<City,town>(City::Atlanta,{Color::Blue,{City::Chicago,City::Miami,City::Washington},false,false,0}));
             cities.insert(pair<City,town>(City::Baghdad,{Color::Black,{City::Tehran,City::Istanbul,City::Cairo,City::Riyadh,City::Karachi},false,false,0}));
@@ -69,7 +67,6 @@ namespace pandemic
             cities.insert(pair<City,town>(City::Montreal,{Color::Blue,{City::Chicago,City::Washington,City::NewYork},false,false,0}));
             cities.insert(pair<City,town>(City::Moscow,{Color::Black,{City::StPetersburg,City::Istanbul,City::Tehran},false,false,0}));
             cities.insert(pair<City,town>(City::Mumbai,{Color::Black,{City::Karachi,City::Delhi,City::Chennai},false,false,0}));
-            cities.insert(pair<City,town>(City::NewYork,{Color::Blue,{City::Montreal,City::Washington,City::London,City::Madrid},false,false,0}));
             cities.insert(pair<City,town>(City::Osaka,{Color::Red ,{City::Taipei,City::Tokyo},false,false,0}));
             cities.insert(pair<City,town>(City::Paris,{Color::Blue,{City::Algiers,City::Essen,City::Madrid,City::Milan,City::London},false,false,0}));
             cities.insert(pair<City,town>(City::Riyadh,{Color::Black,{City::Baghdad,City::Cairo,City::Karachi},false,false,0}));

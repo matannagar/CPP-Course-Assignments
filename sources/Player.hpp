@@ -30,7 +30,14 @@ namespace pandemic
         Player(Board &b, City ci) : board(b), cur_city(ci), myCards()
         {
         }
-
+        void remove_cards()
+        {
+            myCards.clear();
+        }
+        City get_cur_city()
+        {
+            return cur_city;
+        }
         virtual void build(); //builds research facility
         virtual void discover_cure(Color c);
         virtual string role(); //returns my role

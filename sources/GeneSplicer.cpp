@@ -7,7 +7,6 @@ namespace pandemic
 {
     void GeneSplicer::discover_cure(Color c)
     {
-        // cout << "enered discover cure" << endl;
         if (board.cures_found.at(c))
         {
             return;
