@@ -8,7 +8,7 @@
 #include <vector>
 #include <stdexcept>
 using namespace std;
-#define COUNT 10
+constexpr int COUNT = 10;
 
 namespace ariel
 {
@@ -35,8 +35,10 @@ namespace ariel
 
     void remove(Node *root)
     {
-      if (root == NULL)
+      if (!root)
+      {
         return;
+      }
       remove(root->left);
       remove(root->right);
       delete root;
@@ -50,7 +52,9 @@ namespace ariel
       }
 
       if (node->m_value == key)
+      {
         this->existing_element = node;
+      }
 
       /* then recur on left sutree */
       search(node->left, key);
@@ -137,12 +141,14 @@ namespace ariel
 
       void preorder_stack()
       {
-        if (pointer_to_current_node == NULL)
+        if (!pointer_to_current_node)
+        {
           return;
+        }
 
         stack<Node *> s1;
         s1.push(pointer_to_current_node);
-        Node *node;
+        Node *node = nullptr;
 
         // Run while first stack is not empty
         while (!s1.empty())
@@ -155,22 +161,28 @@ namespace ariel
           // Push left and right children
           // of removed item to s1
           if (node->right)
+          {
             s1.push(node->right);
+          }
           if (node->left)
+          {
             s1.push(node->left);
+          }
         }
       }
       void inorder_stack()
       {
-        if (pointer_to_current_node == NULL)
+        if (!pointer_to_current_node)
+        {
           return;
+        }
 
         stack<Node *> s1;
         Node *curr = pointer_to_current_node;
-        while (curr != NULL || s1.empty() == false)
+        while (curr || s1.empty() == false)
         {
 
-          while (curr != NULL)
+          while (curr)
           {
             s1.push(curr);
             curr = curr->left;
@@ -183,12 +195,14 @@ namespace ariel
       }
       void postorder_stack()
       {
-        if (pointer_to_current_node == NULL)
+        if (!pointer_to_current_node)
+        {
           return;
+        }
 
         stack<Node *> temp;
         temp.push(pointer_to_current_node);
-        Node *node;
+        Node *node = nullptr;
 
         while (!temp.empty())
         {
@@ -228,7 +242,9 @@ namespace ariel
       T &operator*() const
       {
         if (!pointer_to_current_node)
+        {
           cout << "No value in node" << endl;
+        }
         return pointer_to_current_node->m_value;
       }
 
@@ -318,8 +334,10 @@ namespace ariel
     void print2DUtil(Node *root, int space)
     {
       // Base case
-      if (root == NULL)
+      if (!root)
+      {
         return;
+      }
 
       // Increase distance between levels
       space += COUNT;
@@ -331,7 +349,9 @@ namespace ariel
       // count
       cout << endl;
       for (int i = COUNT; i < space; i++)
+      {
         cout << " ";
+      }
       cout << root->m_value << "\n";
 
       // Process left child
