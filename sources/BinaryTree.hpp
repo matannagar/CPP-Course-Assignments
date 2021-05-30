@@ -7,6 +7,7 @@
 #include <stack>
 #include <vector>
 #include <stdexcept>
+#include "Node.hpp"
 using namespace std;
 constexpr int COUNT = 10;
 
@@ -19,13 +20,7 @@ namespace ariel
 
   public:
     // inner class
-    struct Node
-    {
-      T m_value;
-      Node *left;
-      Node *right;
-      Node(const T &v) : m_value(v), left(NULL), right(NULL) {}
-    };
+
     BinaryTree() : root(nullptr) {}
 
     ~BinaryTree()
@@ -33,7 +28,7 @@ namespace ariel
       remove(root);
     }
 
-    void remove(Node *root)
+    void remove(Node<T> *root)
     {
       if (!root)
       {
@@ -44,7 +39,7 @@ namespace ariel
       delete root;
     }
 
-    void search(struct Node *node, T key)
+    void search(struct Node<T> *node, T key)
     {
       if (!node)
       {
@@ -54,21 +49,25 @@ namespace ariel
       if (node->m_value == key)
       {
         this->existing_element = node;
+        return;
       }
 
       /* then recur on left sutree */
-      search(node->left, key);
-
       search(node->right, key);
+
+      search(node->left, key);
     }
 
     BinaryTree<T> &add_root(T s)
     {
       if (root)
       {
-        remove(root);
+        root->m_value = s;
       }
-      root = new Node(s);
+      else
+      {
+        root = new Node<T>(s);
+      }
       return *this;
     }
 
@@ -88,7 +87,7 @@ namespace ariel
       }
       else
       {
-        existing_element->left = new Node(add_this);
+        existing_element->left = new Node<T>(add_this);
       }
 
       existing_element = NULL;
@@ -108,24 +107,63 @@ namespace ariel
       }
       else
       {
-        existing_element->right = new Node(add_this);
+        existing_element->right = new Node<T>(add_this);
       }
-      existing_element = NULL;
 
+      existing_element = NULL;
       return *this;
     }
 
-  private:
+    // private:
     // Avoid copying
-    BinaryTree(const BinaryTree &rhs);
-    BinaryTree &operator=(const BinaryTree &rhs);
+    //MOVE ASSIGNMENT
+    BinaryTree &operator=(BinaryTree &&other) noexcept
+    {
+      if (root)
+      {
+        remove(root);
+      }
+      root = other.root;
+      other.root = nullptr;
+      return *this;
+    }
+    //
+    BinaryTree(const BinaryTree &&other) noexcept
+        : root(other.root)
+    {
+    }
+    //MOVE CONSTRUCTOR
+    BinaryTree(BinaryTree &&other) noexcept
+    {
+      root = other.root;
+      other.root = nullptr;
+    }
+    //COPY CONSTRUCTOR
+    BinaryTree(BinaryTree const &other) : root(nullptr)
+    {
+      std::vector<Node<T> const *> remaining;
+      Node<T> const *cur = other.root;
+      this->add_root(cur->m_value);
+    }
+    void swap(BinaryTree &rhs) noexcept
+    {
+      using std::swap;
+      swap(root, rhs.root);
+    }
+    BinaryTree<T> &operator=(const BinaryTree<T> &other)
+    {
+      if (this != &other)
+      {
+        remove(root);
+        root = new Node<T>(*other.root);
+      }
+      return *this;
+    }
 
     // fields
-    Node *root;
-    Node *existing_element = NULL;
-
-  public:
-    Node *getRoot() { return root; }
+    Node<T> *root;
+    Node<T> *existing_element = NULL;
+    Node<T> *getRoot() { return root; }
 
     //-------------------------------------------------------------------
     // iterator related code:
@@ -134,9 +172,9 @@ namespace ariel
     class iterator
     {
     private:
-      Node *pointer_to_current_node;
-      Node *temp = NULL;
-      vector<Node *> nodeStack;
+      Node<T> *pointer_to_current_node;
+      Node<T> *temp = NULL;
+      vector<Node<T> *> nodeStack;
       int flag;
 
       void preorder_stack()
@@ -146,9 +184,9 @@ namespace ariel
           return;
         }
 
-        stack<Node *> s1;
+        stack<Node<T> *> s1;
         s1.push(pointer_to_current_node);
-        Node *node = nullptr;
+        Node<T> *node = nullptr;
 
         // Run while first stack is not empty
         while (!s1.empty())
@@ -177,8 +215,8 @@ namespace ariel
           return;
         }
 
-        stack<Node *> s1;
-        Node *curr = pointer_to_current_node;
+        stack<Node<T> *> s1;
+        Node<T> *curr = pointer_to_current_node;
         while (curr || s1.empty() == false)
         {
 
@@ -200,9 +238,9 @@ namespace ariel
           return;
         }
 
-        stack<Node *> temp;
+        stack<Node<T> *> temp;
         temp.push(pointer_to_current_node);
-        Node *node = nullptr;
+        Node<T> *node = nullptr;
 
         while (!temp.empty())
         {
@@ -223,7 +261,7 @@ namespace ariel
       }
 
     public:
-      iterator(Node *ptr = nullptr, int type = 0)
+      iterator(Node<T> *ptr = nullptr, int type = 0)
           : pointer_to_current_node(ptr), flag(type)
       {
         if (flag == 0)
@@ -265,13 +303,13 @@ namespace ariel
         return *this;
       }
 
-      const iterator operator++(int)
+      iterator operator++(int)
       {
         iterator tmp = *this;
         if (!nodeStack.empty())
         {
-          pointer_to_current_node = nodeStack.top();
-          nodeStack.pop();
+          pointer_to_current_node = nodeStack.at(0);
+          nodeStack.erase(nodeStack.begin());
         }
         else
         {
@@ -331,7 +369,7 @@ namespace ariel
       bt.print2D();
       return os;
     }
-    void print2DUtil(Node *root, int space)
+    void print2DUtil(Node<T> *root, int space)
     {
       // Base case
       if (!root)
