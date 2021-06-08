@@ -8,7 +8,7 @@
 #include <vector>
 #include <stdexcept>
 #include "Node.hpp"
-using namespace std;
+
 constexpr int COUNT = 10;
 
 namespace ariel
@@ -174,7 +174,7 @@ namespace ariel
     private:
       Node<T> *pointer_to_current_node;
       Node<T> *temp = NULL;
-      vector<Node<T> *> nodeStack;
+      std::vector<Node<T> *> nodeStack;
       int flag;
 
       void preorder_stack()
@@ -184,7 +184,7 @@ namespace ariel
           return;
         }
 
-        stack<Node<T> *> s1;
+        std::stack<Node<T> *> s1;
         s1.push(pointer_to_current_node);
         Node<T> *node = nullptr;
 
@@ -215,9 +215,9 @@ namespace ariel
           return;
         }
 
-        stack<Node<T> *> s1;
+        std::stack<Node<T> *> s1;
         Node<T> *curr = pointer_to_current_node;
-        while (curr || s1.empty() == false)
+        while (curr || !s1.empty())
         {
 
           while (curr)
@@ -238,7 +238,7 @@ namespace ariel
           return;
         }
 
-        stack<Node<T> *> temp;
+        std::stack<Node<T> *> temp;
         temp.push(pointer_to_current_node);
         Node<T> *node = nullptr;
 
@@ -281,7 +281,7 @@ namespace ariel
       {
         if (!pointer_to_current_node)
         {
-          cout << "No value in node" << endl;
+          std::cout << "No value in node" << std::endl;
         }
         return pointer_to_current_node->m_value;
       }
@@ -364,7 +364,7 @@ namespace ariel
       return iterator{nullptr, 0};
     }
 
-    friend ostream &operator<<(ostream &os, BinaryTree &bt)
+    friend std::ostream &operator<<(std::ostream &os, BinaryTree &bt)
     {
       bt.print2D();
       return os;
@@ -385,12 +385,12 @@ namespace ariel
 
       // Print current node after space
       // count
-      cout << endl;
+      std::cout << std::endl;
       for (int i = COUNT; i < space; i++)
       {
-        cout << " ";
+        std::cout << " ";
       }
-      cout << root->m_value << "\n";
+      std::cout << root->m_value << "\n";
 
       // Process left child
       print2DUtil(root->left, space);
